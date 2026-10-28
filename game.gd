@@ -44,6 +44,8 @@ func tr2(ja: String, en: String) -> String:
 	return ja if language == "ja" else en
 
 func _ready() -> void:
+	get_window().min_size = Vector2i(640,480)
+	get_window().max_size = Vector2i(3840,2160)
 	_build_world()
 	_build_ui()
 	adapter.attach(ui)
@@ -119,7 +121,7 @@ func _build_world() -> void:
 	# Stairs and ramp lead to a one metre observation ledge.
 	for i in range(5): box(Vector3(-5,0.1+0.1*i,-18-i*0.6),Vector3(3,0.2+0.2*i,0.6),Color("607e89"))
 	var ramp := box(Vector3(-9,0.5,-19),Vector3(2,0.25,5),Color("607e89"))
-	ramp.rotation_degrees.x = -12
+	ramp.rotation_degrees.x = 12
 	box(Vector3(-7,0.9,-22),Vector3(8,0.2,3),Color("607e89"))
 	# Upper exit deck is reachable by the powered elevator.
 	box(Vector3(7,2.8,-22),Vector3(9,0.4,4),Color("45647a"))
@@ -134,7 +136,10 @@ func _build_world() -> void:
 	add_item("generator",Vector3(6,1,-7),Color("ed9c6a"),"A / BATTERY")
 	add_item("auxiliary",Vector3(-6,1,-8),Color("78cbdc"),"B / TOOL")
 	add_item("door",Vector3(4,1,-10),Color("ed9c6a"),"DOOR / CARD")
+	add_item("door_return",Vector3(4,1,-14),Color("ed9c6a"),"DOOR / RETURN")
 	add_item("lift",Vector3(8,0.6,-18),Color("78cbdc"),"LIFT / POWER")
+	add_item("lift_lower",Vector3(10,1,-16),Color("78cbdc"),"CALL LIFT / 0")
+	add_item("lift_upper",Vector3(10,4.1,-21),Color("78cbdc"),"CALL LIFT / 1")
 	add_item("exit",Vector3(8,4.1,-22),Color("7ce4b0"),"EXIT")
 	player = CharacterBody3D.new()
 	player.floor_snap_length = 0.3
@@ -163,6 +168,7 @@ func _build_ui() -> void:
 	var layer := CanvasLayer.new()
 	add_child(layer)
 	ui = Control.new()
+	ui.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	ui.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	layer.add_child(ui)
 	var theme := Theme.new()
@@ -323,9 +329,14 @@ func look(degrees: float) -> void:
 func toggle_crouch() -> void:
 	if screen != "play": return
 	if crouching:
-		var query := PhysicsRayQueryParameters3D.create(player.position+Vector3(0,0.5,0),player.position+Vector3(0,1.8,0))
+		var standing_shape := CapsuleShape3D.new()
+		standing_shape.radius = 0.3
+		standing_shape.height = 1.7
+		var query := PhysicsShapeQueryParameters3D.new()
+		query.shape = standing_shape
+		query.transform = Transform3D(Basis.IDENTITY,player.global_position+Vector3(0,0.85,0))
 		query.exclude = [player.get_rid()]
-		if not get_world_3d().direct_space_state.intersect_ray(query).is_empty():
+		if not get_world_3d().direct_space_state.intersect_shape(query).is_empty():
 			message = tr2("天井が低いため立てません。","Ceiling too low to stand.")
 			return
 	crouching = not crouching
@@ -342,6 +353,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				elif screen == "pause": resume_game()
 			KEY_E: interact()
 			KEY_C: toggle_crouch()
+
+func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT) and screen == "play":
 		player.rotation.y -= event.relative.x*0.003
 		camera.rotation.x = clampf(camera.rotation.x-event.relative.y*0.003,-1.13,1.13)
@@ -437,15 +450,17 @@ func interact() -> void:
 				auxiliary = true
 				message = tr2("B 復旧。工具は保持されます。","B repaired. Tool retained.")
 			else: message = tr2("工具が必要です。","Tool required.")
-		"door":
+		"door","door_return":
 			if generator and inventory.has("key"):
 				door_open = true
 				door_timer = 4
 				message = tr2("扉を4秒間開きます。通行中は閉まりません。","Door open for 4s; occupancy prevents closing.")
 			else: message = tr2("A の電源とカードキーが必要です。","A power and card key required.")
-		"lift":
+		"lift","lift_lower","lift_upper":
 			if generator and auxiliary:
-				lift_target = 3.0 if lift_target < 1 else 0.0
+				if id == "lift_lower": lift_target = 0.0
+				elif id == "lift_upper": lift_target = 3.0
+				else: lift_target = 3.0 if lift_target < 1 else 0.0
 				message = tr2("リフト移動開始。搭乗したまま中断・保存できます。","Lift moving. Pause/save while aboard is supported.")
 			else: message = tr2("A と B 両方の復旧が必要です。","Both A and B must be online.")
 		"exit":

@@ -33,12 +33,31 @@ jobs:
       - name: Operate real Windows EXE through Gua
         shell: pwsh
         run: node tests/acceptance.mjs
+      - name: Verify restart and reject corrupted checkpoint
+        shell: pwsh
+        run: |
+          $env:TEST_SUITE='restore'
+          $env:SAVE_APPDATA="$pwd/artifacts/acceptance/appdata"
+          $env:EVIDENCE_DIR='artifacts/restart'
+          node tests/acceptance.mjs
+      - name: Compare individual known defects
+        shell: pwsh
+        run: |
+          $env:TEST_SUITE='bugs'
+          $env:EVIDENCE_DIR='artifacts/bugs'
+          node tests/acceptance.mjs
+      - name: Verify collision and alternate order recovery
+        shell: pwsh
+        run: |
+          $env:TEST_SUITE='edges'
+          $env:EVIDENCE_DIR='artifacts/edges'
+          node tests/acceptance.mjs
       - name: Preserve test evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: facility-3d-exe-evidence
-          path: artifacts/acceptance/
+          path: artifacts/
       - name: Preserve Windows build
         uses: actions/upload-artifact@v4
         with:

@@ -9,11 +9,12 @@ const exe=resolve(process.argv[2]??join(root,'dist/FacilityEscape.exe'));
 const output=resolve(process.env.EVIDENCE_DIR??join(root,'artifacts/acceptance'));
 const headed=process.env.HEADED==='1';
 const port=process.env.GUA_BRIDGE_PORT??'18732';
-const appdata=join(output,'appdata');
+const appdata=resolve(process.env.SAVE_APPDATA??join(output,'appdata'));
 await mkdir(appdata,{recursive:true});
 await mkdir(join(output,'tmp'),{recursive:true});
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const history=[],results=[];
+let activeConfig=[];
 let stdout='',stderr='',socket,sequence=1;
 const pending=new Map();
 const child=spawn(exe,headed?['--max-fps','60']:['--headless','--max-fps','60'],{cwd:root,env:{...process.env,APPDATA:appdata,TEMP:join(output,'tmp'),TMP:join(output,'tmp'),GUA_BRIDGE_PORT:port},windowsHide:!headed});
@@ -42,7 +43,7 @@ async function click(id,delay=55){
   assert.equal(completion.succeeded,true,'action '+id);
   await sleep(delay);
   const observed=await tree();
-  history.push({action:id,receipt,completion,observed});
+  history.push({action:id,activeBugs:[...activeConfig],receipt,completion,observed});
   return observed;
 }
 async function state(){
@@ -124,7 +125,7 @@ try{
   assert.equal(version.coreVersion,'1.1.2');
   assert.equal(version.runtimeVersion,'1.1.2');
   assert.equal(version.godotPluginVersion,'1.1.2');
-  if(process.env.TEST_SUITE!=='bugs'){
+  if(!['bugs','edges','restore'].includes(process.env.TEST_SUITE)){
   await check('T01-title-start',async()=>{
     assert.equal((await tree()).screen,'title');
     await checkpoint('title');
@@ -190,6 +191,85 @@ try{
     await click('reset');assert.equal((await tree()).screen,'play');
     await click('pause');await click('load');assert.equal((await tree()).screen,'play');
   });
+  } else if(process.env.TEST_SUITE==='restore') {
+    await check('T15-restart-corrupt-save',async()=>{
+      assert.equal((await tree()).screen,'title');
+      await click('load');assert.equal((await tree()).screen,'play');
+      assert.ok(text(await tree(),'status').includes('key'));
+      await sleep(3200);
+      const before=await state();
+      await click('pause');await click('save');
+      const path=join(appdata,'facility-escape-3d/checkpoint.json');
+      const valid=await readFile(path,'utf8');
+      await writeFile(path,'{"broken":');
+      await click('load');assert.equal((await tree()).screen,'pause');
+      assert.ok(text(await tree(),'menu_message').includes('有効な')||text(await tree(),'menu_message').includes('No valid'));
+      await click('resume');
+      const after=await state();
+      assert.ok(Math.abs(after.x-before.x)<.05&&Math.abs(after.z-before.z)<.05);
+      await writeFile(path,valid);
+      await click('pause');await click('load');assert.equal((await tree()).screen,'play');
+      await checkpoint('restart-restored');
+    });
+  } else if(process.env.TEST_SUITE==='edges') {
+    await click('start');
+    await check('T12-crawl-boundary',async()=>{
+      await go(-11,8);await face();
+      for(let i=0;i<3;i++)await click('forward',285);
+      assert.ok((await state()).z>7,'standing collision with low roof');
+      await click('crouch');
+      for(let i=0;i<7;i++)await click('forward',285);
+      assert.ok((await state()).z<5,'crouching passes roof');
+      await click('crouch');assert.ok(text(await tree(),'status').includes('CROUCH'),'cannot stand under roof');
+      for(let i=0;i<8;i++)await click('back',285);
+      await click('crouch');assert.ok(text(await tree(),'status').includes('STAND'));
+      for(let i=0;i<5;i++)await click('left',285);
+      assert.ok((await state()).x>-11.8,'outer wall retains player');
+      await checkpoint('crawl-wall');
+      await go(0,8);
+    });
+    await check('T13-prerequisites-A-first-return',async()=>{
+      await go(0,-2);await go(4,-2);await go(4,-7);await use('generator',6,1,-7);
+      assert.ok(text(await tree(),'status').includes('A:false'));
+      await go(4,-8.5);await use('door',4,1,-10);
+      assert.ok(text(await tree(),'notice').includes('必要')||text(await tree(),'notice').includes('required'));
+      await go(4,-2);await go(0,-2);await go(0,6.5);
+      await go(-3,6.5);await use('tool',-3,1,5);await go(3,6.5);await use('battery',3,1,5);
+      await go(0,2);await go(0,-.8);await go(-8,-.8);await use('key',-8,1,-2);
+      await go(-2,-2);await go(4,-2);await go(4,-7);await use('generator',6,1,-7);
+      assert.ok(text(await tree(),'status').includes('A:true B:false'));
+      await go(4,-8.5);await use('door',4,1,-10);await go(6,-8.5);await go(6,-15.5);
+      await sleep(4500);
+      await go(8,-15.5);await use('lift_lower',10,1,-16);
+      assert.ok(text(await tree(),'notice').includes('両方')||text(await tree(),'notice').includes('Both'));
+      await go(4,-15.5);await use('door_return',4,1,-14);
+      await go(6,-15.5);await go(6,-10.5);
+      assert.ok((await state()).z>-12,'return through bulkhead with B offline');
+      await go(2.5,-10.5);await go(2.5,-2);await go(-9.5,-2);await go(-9.5,-6.6);await go(-6,-6.6);await use('auxiliary',-6,1,-8);
+      assert.ok(text(await tree(),'status').includes('A:true B:true'));
+      await checkpoint('A-first-return');
+      await go(-9.5,-6.6);await go(-9.5,-2);await go(4,-2);await go(4,-8.5);await use('door',4,1,-10);
+      await go(6,-8.5);await go(6,-15.5);
+    });
+    await check('T12b-stairs-ramp',async()=>{
+      await go(-5,-15.5);await go(-5,-22);
+      assert.ok((await state()).y>.8,'stairs reach one metre ledge');
+      await go(-5,-16);await go(-9,-16);await go(-9,-22);
+      assert.ok((await state()).y>.8,'ramp reaches ledge');
+      await checkpoint('stairs-ramp');
+      await go(-9,-15);await go(7,-15);
+    });
+    await check('T16-unoccupied-lift-recall',async()=>{
+      await go(9.7,-15.5);await go(9.7,-17);await use('lift',8,.6,-18);
+      await sleep(3400);
+      assert.ok((await state()).y<.2,'player not aboard');
+      await go(10,-14.5);await use('lift_lower',10,1,-16);await sleep(3400);
+      await go(7.3,-14.5);await go(7.3,-16.8);await use('lift',8,.6,-18);
+      await sleep(3400);assert.ok((await state()).y>2.8);
+      await checkpoint('lift-recalled');
+      await go(7,-20.5);await go(8,-20.5);await use('exit',8,4.1,-22);
+      assert.equal((await tree()).screen,'result');
+    });
   } else {
     async function fresh(active){
       if((await tree()).screen==='play')await click('pause');
@@ -197,6 +277,7 @@ try{
         const on=text(await tree(),'bug_'+id).startsWith('[ON]');
         if(on!==(id===active))await click('bug_'+id);
       }
+      activeConfig=active?[active]:[];
       await click('reset');
     }
     await check('T09-lost-key-differential',async()=>{
@@ -250,6 +331,6 @@ finally{
   child.kill();await sleep(300);
   await writeFile(join(output,'engine.log'),stdout+'\nSTDERR\n'+stderr);
   await writeFile(join(output,'history.json'),JSON.stringify(history,null,2));
-  await writeFile(join(output,'summary.json'),JSON.stringify({scenario:'facility-r1',seed:3001,bugs:[],mode:headed?'rendered-exe':'headless-exe',exe,sha256:createHash('sha256').update(await readFile(exe)).digest('hex'),results,unverified:['Audio subjective quality','Human physical keyboard full run','Unlisted geometry boundaries and exploratory coverage']},null,2));
+  await writeFile(join(output,'summary.json'),JSON.stringify({scenario:'facility-r1',seed:3001,bugConfigurations:[...new Set(history.map(h=>JSON.stringify(h.activeBugs)))].map(x=>JSON.parse(x)),mode:headed?'rendered-exe':'headless-exe',exe,sha256:createHash('sha256').update(await readFile(exe)).digest('hex'),results,unverified:['Audio subjective quality','Human physical keyboard full run','Unlisted geometry boundaries and exploratory coverage']},null,2));
   for(const p of pending.values()){clearTimeout(p.timer);p.reject(Error('test closed'));}
 }
