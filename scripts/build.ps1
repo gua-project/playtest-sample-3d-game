@@ -20,6 +20,10 @@ try {
     Copy-Item (Join-Path $TemplateDirectory 'windows_release_x86_64*.exe') $templates -Force
     New-Item -ItemType Directory -Force (Join-Path $root 'dist') | Out-Null
     Set-Content (Join-Path $root 'dist/.gdignore') ''
+    foreach ($name in @('FacilityEscape.exe','gua_godot.windows.release.x86_64.dll')) {
+        $previousOutput = Join-Path $root "dist/$name"
+        if (Test-Path -LiteralPath $previousOutput) { Remove-Item -LiteralPath $previousOutput }
+    }
     # Export performs the import itself. A separate Windows --editor --import
     # shutdown crashed on the CI runner before the export could be attempted.
     & $Godot --headless --path $root --log-file (Join-Path $env:APPDATA 'godot-export.log') --export-release 'Windows Desktop' (Join-Path $root 'dist/FacilityEscape.exe')
