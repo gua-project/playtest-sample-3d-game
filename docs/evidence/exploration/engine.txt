@@ -1,0 +1,5 @@
+Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
+
+Gua WebSocket bridge listening on ws://127.0.0.1:19732
+Inspector connected.
+Inspector disconnected.

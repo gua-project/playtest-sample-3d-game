@@ -22,6 +22,8 @@ jobs:
           Set-Content vendor/.gdignore ''
           Invoke-WebRequest 'https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_win64.exe.zip' -OutFile vendor/godot.zip
           Invoke-WebRequest 'https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_export_templates.tpz' -OutFile vendor/templates.zip
+          if ((Get-FileHash vendor/godot.zip).Hash.ToLowerInvariant() -ne '02a5312236f4e0209c78bcb2f52135b1963e6b8888c873c9cee81459e60bcd71') { throw 'Godot SHA256 mismatch' }
+          if ((Get-FileHash vendor/templates.zip).Hash.ToLowerInvariant() -ne '9714459dc071907c0f3d5f17d608faf69e7cda21331fc5d39c4503ffa4e99eec') { throw 'Template SHA256 mismatch' }
           Expand-Archive vendor/godot.zip vendor/godot
           Expand-Archive vendor/templates.zip vendor/templates
       - name: Verify and install official Gua 1.1.2 locally

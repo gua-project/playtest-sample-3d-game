@@ -1,0 +1,25 @@
+{
+  "scenario": "facility-r1",
+  "seed": 3001,
+  "bugConfigurations": [
+    []
+  ],
+  "mode": "headless-exe",
+  "exe": "dist/FacilityEscape.exe",
+  "sha256": "3e5505662d595bb83086e7eaf7a9c8160dcc745a97bf8fce696115278c46df9b",
+  "results": [
+    {
+      "id": "T15-restart-corrupt-save",
+      "status": "passed",
+      "actions": [
+        0,
+        6
+      ]
+    }
+  ],
+  "unverified": [
+    "Audio subjective quality",
+    "Human physical keyboard full run",
+    "Unlisted geometry boundaries and exploratory coverage"
+  ]
+}

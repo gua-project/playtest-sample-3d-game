@@ -31,6 +31,7 @@ function request(type,args={}) {
 async function tree(){return request('get_ui_tree');}
 function text(t,id){return t.nodes.find(n=>n.id===id)?.text??'';}
 async function click(id,delay=55){
+  const activeBugsBefore=[...activeConfig];
   const receipt=await request('click_node',{nodeId:id});
   assert.ok(receipt?.requestId>0,'receipt '+id);
   let completion;
@@ -43,7 +44,13 @@ async function click(id,delay=55){
   assert.equal(completion.succeeded,true,'action '+id);
   await sleep(delay);
   const observed=await tree();
-  history.push({action:id,activeBugs:[...activeConfig],receipt,completion,observed});
+  const bugButtons=observed.nodes.filter(n=>n.id.startsWith('bug_'));
+  if(bugButtons.length)activeConfig=bugButtons.filter(n=>n.text?.startsWith('[ON]')).map(n=>n.id.slice(4));
+  else {
+    const flags=text(observed,'notice').match(/bugs=(\[.*\])/);
+    if(flags)activeConfig=JSON.parse(flags[1]);
+  }
+  history.push({action:id,activeBugsBefore,activeBugs:[...activeConfig],receipt,completion,observed});
   return observed;
 }
 async function state(){
@@ -260,10 +267,10 @@ try{
       await go(-9,-15);await go(7,-15);
     });
     await check('T16-unoccupied-lift-recall',async()=>{
-      await go(9.7,-15.5);await go(9.7,-17);await use('lift',8,.6,-18);
+      await go(11,-15.5);await go(11,-17);await go(10.2,-17);await use('lift',8,.6,-18);
       await sleep(3400);
       assert.ok((await state()).y<.2,'player not aboard');
-      await go(10,-14.5);await use('lift_lower',10,1,-16);await sleep(3400);
+      await go(11,-17);await go(11,-14.5);await go(10,-14.5);await use('lift_lower',10,1,-16);await sleep(3400);
       await go(7.3,-14.5);await go(7.3,-16.8);await use('lift',8,.6,-18);
       await sleep(3400);assert.ok((await state()).y>2.8);
       await checkpoint('lift-recalled');

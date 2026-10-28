@@ -34,6 +34,17 @@ Gua 標準 `GuaAutoAdapter` が画面の UI を公開し、標準観測プロト
 
 ```powershell
 node tests/acceptance.mjs
+# 個別バグ比較（新しい保存先）
+$env:TEST_SUITE='bugs'; $env:EVIDENCE_DIR='artifacts/bugs'
+node tests/acceptance.mjs
+# 低天井、外周、階段・坂、A先行と帰還、無人リフト呼戻し
+$env:TEST_SUITE='edges'; $env:EVIDENCE_DIR='artifacts/edges'
+node tests/acceptance.mjs
+# 前のnormal実行で作成したセーブを、別プロセスでロードする
+$env:TEST_SUITE='restore'; $env:SAVE_APPDATA="$pwd/artifacts/acceptance/appdata"
+$env:EVIDENCE_DIR='artifacts/restart'
+node tests/acceptance.mjs
+Remove-Item Env:TEST_SUITE,Env:SAVE_APPDATA
 # 描画ウィンドウの検証（他担当の GUI 利用と事前調整）
 $env:HEADED='1'
 $env:EVIDENCE_DIR='artifacts/rendered'
@@ -41,6 +52,8 @@ node tests/acceptance.mjs
 ```
 
 テストは **export した EXE** を起動し、Gua WebSocket のアクション受付・完了を相関 ID で確認します。UI Tree、操作履歴、Gua バージョン、EXE SHA256、実行ログ、結果一覧を `artifacts/acceptance`（または指定出力先）に残します。描画ありの場合は Gua のスクリーンショットも保存します。headless 成功は画面の受入成功を意味しません。
+
+`tests/explore.mjs` は固定クリア手順を持たない探索用 runner です。標準入力に `{"click":"start"}`、`{"click":"forward","count":3}`、`{"observe":true,"note":"この境界で移動結果を調べる"}`、`{"quit":true}` のように JSON を1行ずつ渡し、通常操作と観測を記録できます。`scripts/summarize-evidence.mjs acceptance bugs edges restart` は実行済みの証拠からコンパクトな操作記録を `docs/evidence` に作成します。
 
 ゲーム自身の `last-run.json` はビルド・シナリオ・シード・有効バグと通常操作の結果を記録します。乱数は使わず、固定の記録用 seed=3001、シナリオ版 `facility-r1` です。テスト一覧と未実施範囲は [docs/test-matrix.md](docs/test-matrix.md)、判断した細部は [docs/decisions.md](docs/decisions.md) を参照してください。
 
