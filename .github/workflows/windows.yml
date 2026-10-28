@@ -29,12 +29,9 @@ jobs:
       - name: Verify and install official Gua 1.1.2 locally
         shell: pwsh
         run: ./scripts/setup-gua.ps1
-      - name: Export Windows EXE
+      - name: Export and verify real Windows EXE through Gua
         shell: pwsh
-        run: ./scripts/build.ps1 -Godot "$pwd/vendor/godot/Godot_v4.7-stable_win64_console.exe" -TemplateDirectory "$pwd/vendor/templates/templates"
-      - name: Operate real Windows EXE through Gua
-        shell: pwsh
-        run: node tests/acceptance.mjs
+        run: ./scripts/build.ps1 -Godot "$pwd/vendor/godot/Godot_v4.7-stable_win64_console.exe" -TemplateDirectory "$pwd/vendor/templates/templates" -VerifyPlayer
       - name: Verify restart and reject corrupted checkpoint
         shell: pwsh
         run: |
