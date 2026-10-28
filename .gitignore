@@ -1,0 +1,8 @@
+.godot/
+vendor/
+addons/gua/bin/
+artifacts/
+dist/
+*.tmp
+.runtime/
+*.log

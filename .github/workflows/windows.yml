@@ -1,0 +1,46 @@
+name: Windows EXE acceptance
+on:
+  push:
+    branches-ignore: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  exe:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Get official Godot 4.7 and templates
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force vendor | Out-Null
+          Set-Content vendor/.gdignore ''
+          Invoke-WebRequest 'https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_win64.exe.zip' -OutFile vendor/godot.zip
+          Invoke-WebRequest 'https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_export_templates.tpz' -OutFile vendor/templates.zip
+          Expand-Archive vendor/godot.zip vendor/godot
+          Expand-Archive vendor/templates.zip vendor/templates
+      - name: Verify and install official Gua 1.1.2 locally
+        shell: pwsh
+        run: ./scripts/setup-gua.ps1
+      - name: Export Windows EXE
+        shell: pwsh
+        run: ./scripts/build.ps1 -Godot "$pwd/vendor/godot/Godot_v4.7-stable_win64_console.exe" -TemplateDirectory "$pwd/vendor/templates/templates"
+      - name: Operate real Windows EXE through Gua
+        shell: pwsh
+        run: node tests/acceptance.mjs
+      - name: Preserve test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: facility-3d-exe-evidence
+          path: artifacts/acceptance/
+      - name: Preserve Windows build
+        uses: actions/upload-artifact@v4
+        with:
+          name: facility-3d-windows
+          path: dist/
