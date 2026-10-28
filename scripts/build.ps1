@@ -19,9 +19,9 @@ try {
     Copy-Item (Join-Path $TemplateDirectory 'windows_release_x86_64*.exe') $templates -Force
     New-Item -ItemType Directory -Force (Join-Path $root 'dist') | Out-Null
     Set-Content (Join-Path $root 'dist/.gdignore') ''
-    & $Godot --headless --editor --path $root --import --quit
-    if ($LASTEXITCODE -ne 0) { throw "Godot import failed: $LASTEXITCODE" }
-    & $Godot --headless --path $root --export-release 'Windows Desktop' (Join-Path $root 'dist/FacilityEscape.exe')
+    # Export performs the import itself. A separate Windows --editor --import
+    # shutdown crashed on the CI runner before the export could be attempted.
+    & $Godot --headless --path $root --log-file (Join-Path $env:APPDATA 'godot-export.log') --export-release 'Windows Desktop' (Join-Path $root 'dist/FacilityEscape.exe')
     if ($LASTEXITCODE -ne 0) { throw "Godot export failed: $LASTEXITCODE" }
     Get-FileHash (Join-Path $root 'dist/FacilityEscape.exe') -Algorithm SHA256
 } finally { $env:APPDATA = $previousAppData; $env:TEMP = $previousTemp; $env:TMP = $previousTmp }
