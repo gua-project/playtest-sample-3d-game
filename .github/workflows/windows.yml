@@ -51,6 +51,9 @@ jobs:
           $env:TEST_SUITE='edges'
           $env:EVIDENCE_DIR='artifacts/edges'
           node tests/acceptance.mjs
+      - name: Verify two-file distribution in an isolated directory
+        shell: pwsh
+        run: node tests/distribution.mjs dist
       - name: Preserve test evidence
         if: always()
         uses: actions/upload-artifact@v4

@@ -17,7 +17,7 @@ const history=[],results=[];
 let activeConfig=[];
 let stdout='',stderr='',socket,sequence=1;
 const pending=new Map();
-const child=spawn(exe,headed?['--max-fps','60']:['--headless','--max-fps','60'],{cwd:root,env:{...process.env,APPDATA:appdata,TEMP:join(output,'tmp'),TMP:join(output,'tmp'),GUA_BRIDGE_PORT:port},windowsHide:!headed});
+const child=spawn(exe,headed?['--max-fps','60']:['--headless','--max-fps','60'],{cwd:process.env.GUA_TEST_CWD??root,env:{...process.env,APPDATA:appdata,TEMP:join(output,'tmp'),TMP:join(output,'tmp'),GUA_BRIDGE_PORT:port},windowsHide:!headed});
 child.stdout.on('data',x=>stdout+=x);
 child.stderr.on('data',x=>stderr+=x);
 function request(type,args={}) {
