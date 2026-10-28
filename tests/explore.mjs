@@ -10,7 +10,7 @@ await mkdir(join(out,'appdata'),{recursive:true});
 const exe=join(root,'dist/FacilityEscape.exe'),port=process.env.GUA_BRIDGE_PORT??'18732';
 const headed=process.env.HEADED==='1';
 const child=spawn(exe,headed?['--max-fps','60']:['--headless','--max-fps','60'],{cwd:root,env:{...process.env,APPDATA:join(out,'appdata'),GUA_BRIDGE_PORT:port},windowsHide:!headed});
-let log='',socket,sequence=1;
+let log='',socket,input,sequence=1;
 child.stdout.on('data',x=>log+=x);child.stderr.on('data',x=>log+=x);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms)),pending=new Map(),events=[];
 function request(type,args={}){
@@ -29,7 +29,7 @@ try{
     pending.delete(d.id);clearTimeout(p.timer);if(d.ok)p.res(d.result);else p.rej(Error(JSON.stringify(d.error)));
   });
   console.log('READY',JSON.stringify(await request('get_version')));
-  const input=createInterface({input:process.stdin,crlfDelay:Infinity});
+  input=createInterface({input:process.stdin,crlfDelay:Infinity});
   for await(const line of input){
     if(!line.trim())continue;
     const cmd=JSON.parse(line);
@@ -59,6 +59,8 @@ try{
   }
 }catch(error){console.error(error);process.exitCode=1;}
 finally{
+  input?.close();
+  process.stdin.pause();
   socket?.close();child.kill();await sleep(250);
   await writeFile(join(out,'engine.log'),log);
   await writeFile(join(out,'session.json'),JSON.stringify({scenario:'facility-r1',seed:3001,sha256:createHash('sha256').update(await readFile(exe)).digest('hex'),objective:'Explore collision, occlusion, input and recovery through ordinary player controls; report observed outcomes, without a fixed clear route.',mode:headed?'rendered-exe':'headless-exe',events:events.length},null,2));
