@@ -16,6 +16,8 @@ PowerShell と Node.js 22 以降、Godot 4.7 Windows x64 と同版の Windows re
 
 配布には `dist/FacilityEscape.exe` **と同梱される `gua_godot.windows.release.x86_64.dll` の両方**が必要です。PCK は EXE に内蔵します。タグ・Release はこの作業から公開しません。アドオン ZIP は公式配布から取得し SHA256 `19f89058ca60e48c74a7327da31c0e011b4c053acfda8e5b8e2e2b1fc90ae8c4` を照合します。アドオンソースとライセンスを保持し、バイナリはセットアップ時に取得します。
 
+正式Gua DLLは `MSVCP140.dll`、`MSVCP140_2.dll`、`VCRUNTIME140.dll`、`VCRUNTIME140_1.dll` とWindows CRTを参照します。対応するMicrosoft Visual C++ x64ランタイムが利用可能な環境が前提です。このPCとCIでは利用でき、2ファイルだけの別ディレクトリで通常受入8件を確認しました。ランタイム未導入のクリーンWindowsは未検証です。この作業ではランタイムのインストールやシステムDLLの同梱は行っていません。
+
 `build.ps1` は Godot の APPDATA/TEMP/TMP を checkout の `.runtime` に分離し、渡された既存 template をコピーして使います。実行時の通常セーブは `%APPDATA%/facility-escape-3d` に保存します。並行テストは `APPDATA` を固有ディレクトリに指定してください。テストは自動で分離します。
 
 ## 遊び方

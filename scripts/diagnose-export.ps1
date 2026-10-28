@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][string]$Godot,[Parameter(Mandatory=$true)][string]$TemplateDirectory)
+param([Parameter(Mandatory=$true)][string]$Godot,[Parameter(Mandatory=$true)][string]$TemplateDirectory,[ValidateSet('baseline','followup')][string]$Mode='baseline')
 $ErrorActionPreference='Stop'
 $sourceRoot=Split-Path $PSScriptRoot -Parent
 $experimentRoot=Join-Path $sourceRoot ('artifacts/export-diagnostics/'+[guid]::NewGuid().ToString('N'))
@@ -6,7 +6,8 @@ New-Item -ItemType Directory -Force $experimentRoot | Out-Null
 $originalAppData=$env:APPDATA; $originalTemp=$env:TEMP; $originalTmp=$env:TMP
 $results=@()
 try {
-    foreach($case in @('minimal-no-addon','minimal-addon','game-no-addon','game-addon')) {
+    $cases=if($Mode -eq 'baseline'){@('minimal-no-addon','minimal-addon','game-no-addon','game-addon')}else{@('minimal-addon-native-only','minimal-addon-editor-release')}
+    foreach($case in $cases) {
         $caseRoot=Join-Path $experimentRoot $case
         New-Item -ItemType Directory -Force $caseRoot | Out-Null
         Copy-Item (Join-Path $sourceRoot 'project.godot') $caseRoot
@@ -28,7 +29,15 @@ class NoGuaAdapter extends RefCounted:
             }
             Set-Content (Join-Path $caseRoot 'game.gd') $game
         }
-        if($case -in @('minimal-addon','game-addon')) { Copy-Item (Join-Path $sourceRoot 'addons') $caseRoot -Recurse }
+        if($case -ne 'minimal-no-addon' -and $case -ne 'game-no-addon') { Copy-Item (Join-Path $sourceRoot 'addons') $caseRoot -Recurse }
+        if($case -eq 'minimal-addon-native-only') {
+            Get-ChildItem (Join-Path $caseRoot 'addons/gua') -Filter '*.gd' -File | ForEach-Object { Remove-Item -LiteralPath $_.FullName }
+        }
+        if($case -eq 'minimal-addon-editor-release') {
+            $descriptor=Join-Path $caseRoot 'addons/gua/gua.gdextension'
+            $contents=Get-Content $descriptor -Raw
+            Set-Content $descriptor $contents.Replace('windows.debug.x86_64 = "res://addons/gua/bin/gua_godot.windows.debug.x86_64.dll"','windows.debug.x86_64 = "res://addons/gua/bin/gua_godot.windows.release.x86_64.dll"')
+        }
         $env:APPDATA=Join-Path $caseRoot '_runtime'
         $env:TEMP=Join-Path $env:APPDATA 'tmp'; $env:TMP=$env:TEMP
         New-Item -ItemType Directory -Force $env:TEMP | Out-Null
@@ -48,6 +57,6 @@ class NoGuaAdapter extends RefCounted:
     }
 } finally {
     $env:APPDATA=$originalAppData; $env:TEMP=$originalTemp; $env:TMP=$originalTmp
-    @{godot=(Get-FileHash $Godot).Hash.ToLowerInvariant();os=[Environment]::OSVersion.VersionString;windowsFaultEvents='Not collected: local Application log read denied; no retry';cases=$results} | ConvertTo-Json -Depth 5 | Set-Content (Join-Path $experimentRoot 'comparison.json')
+    @{mode=$Mode;godot=(Get-FileHash $Godot).Hash.ToLowerInvariant();os=[Environment]::OSVersion.VersionString;windowsFaultEvents='Not collected: local Application log read denied; no retry';cases=$results} | ConvertTo-Json -Depth 5 | Set-Content (Join-Path $experimentRoot 'comparison.json')
     Write-Output "Disposable experiment evidence: $experimentRoot"
 }

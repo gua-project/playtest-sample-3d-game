@@ -1,6 +1,11 @@
 name: Isolated export controls
 on:
   workflow_dispatch:
+    inputs:
+      mode:
+        type: choice
+        options: [baseline, followup]
+        default: baseline
 permissions:
   contents: read
 jobs:
@@ -23,7 +28,7 @@ jobs:
           ./scripts/setup-gua.ps1
       - name: Compare disposable projects with and without Gua 1.1.2
         shell: pwsh
-        run: ./scripts/diagnose-export.ps1 -Godot "$pwd/vendor/godot/Godot_v4.7-stable_win64_console.exe" -TemplateDirectory "$pwd/vendor/templates/templates"
+        run: ./scripts/diagnose-export.ps1 -Godot "$pwd/vendor/godot/Godot_v4.7-stable_win64_console.exe" -TemplateDirectory "$pwd/vendor/templates/templates" -Mode '${{ inputs.mode }}'
       - uses: actions/upload-artifact@v4
         if: always()
         with:

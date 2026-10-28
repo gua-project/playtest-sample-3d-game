@@ -32,4 +32,4 @@ Gua UI Tree とセーブ状態で、所持・電源・画面遷移・位置・�
 
 2026-10-28、レビュー修正後 Windows EXE SHA256 `3e5505662d595bb83086e7eaf7a9c8160dcc745a97bf8fce696115278c46df9b` で固定回帰16件成功。Gua core/runtime/Godot plugin/adapter は全て1.1.2、buildId `b398e531558f38220baf0b606e7c3f33904a87a5`。探索は固定回帰と別の判断過程を記録した限定セッションであり、網羅性を主張しない。
 
-描画ありEXEの画像、右ドラッグ/実キーボード入力、音、上階からのリフト呼出し、前提不足の出口操作、扉を反転して通行する全境界、広範な保存破損/状態組合せは未実施。GUI枠は親の調整待ち。main/base commitが空でpush待機中のため、remote CIとDraft PRも未実施。
+描画ありEXEの画像、右ドラッグ/実キーボード入力、音、上階からのリフト呼出し、前提不足の出口操作、扉を反転して通行する全境界、広範な保存破損/状態組合せは未実施。GUI枠は親の調整待ち。作業ブランチはpush済みでremote CIも実行しており、各runとartifactを一次記録とする。main/base commitが空のためDraft PRは保留。
