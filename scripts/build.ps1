@@ -49,5 +49,20 @@ try {
         $report | ConvertTo-Json | Set-Content (Join-Path $evidence 'export.json')
     }
     if ($exportExitCode -ne 0) { Write-Warning "Godot editor crashed after packing ($exportExitCode); the exported EXE passed Gua acceptance. Editor shutdown remains a known CI limitation; see artifacts/build." }
+    if ($env:GITHUB_STEP_SUMMARY) {
+        $editorStatus = if ($exportExitCode -eq 0) { 'Clean exit' } else { "FAILED: editor shutdown crash ($exportExitCode)" }
+        @"
+## Export process and player acceptance are separate outcomes
+
+| Check | Observed result |
+|---|---|
+| Godot editor process | $editorStatus |
+| Pack completion marker | $packComplete |
+| Real Windows EXE Gua acceptance | $($report.playerAcceptancePassed) |
+| EXE SHA256 | $hash |
+
+An accepted player does not resolve the editor shutdown crash. See artifacts/build/export.json and docs/export-diagnosis.md.
+"@ | Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY
+    }
     Write-Output "Windows EXE SHA256: $hash"
 } finally { $env:APPDATA = $previousAppData; $env:TEMP = $previousTemp; $env:TMP = $previousTmp }
