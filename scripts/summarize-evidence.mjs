@@ -2,7 +2,7 @@ import {mkdir,readFile,writeFile,copyFile} from 'node:fs/promises';
 import {resolve,join} from 'node:path';
 const root=resolve(import.meta.dirname,'..');
 for(const run of process.argv.slice(2)){
-  if(!/^[a-z-]+$/.test(run))throw Error('Invalid run name');
+  if(!/^[a-z][a-z0-9-]*$/.test(run))throw Error('Invalid run name');
   const source=join(root,'artifacts',run),target=join(root,'docs/evidence',run);
   if(run==='exploration'){
     const session=JSON.parse(await readFile(join(source,'session.json'),'utf8'));

@@ -1,0 +1,44 @@
+{
+  "scenario": "facility-r1",
+  "seed": 3001,
+  "bugConfigurations": [
+    [],
+    [
+      "lost_key"
+    ]
+  ],
+  "mode": "headless-exe",
+  "exe": "dist/FacilityEscape.exe",
+  "sha256": "5e7b38c1b2b0bc24334968970a4e12eac1ef512c1f97a56a7924adf7a0fcc1fa",
+  "results": [
+    {
+      "id": "T17-moving-lift-reversal",
+      "status": "passed",
+      "actions": [
+        0,
+        6
+      ]
+    },
+    {
+      "id": "T18-upper-landing-recall",
+      "status": "passed",
+      "actions": [
+        7,
+        54
+      ]
+    },
+    {
+      "id": "T19-exit-rejects-missing-card",
+      "status": "passed",
+      "actions": [
+        55,
+        75
+      ]
+    }
+  ],
+  "unverified": [
+    "Audio subjective quality",
+    "Human physical keyboard full run",
+    "Unlisted geometry boundaries and exploratory coverage"
+  ]
+}
