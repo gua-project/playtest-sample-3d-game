@@ -47,6 +47,10 @@ $env:TEST_SUITE='restore'; $env:SAVE_APPDATA="$pwd/artifacts/acceptance/appdata"
 $env:EVIDENCE_DIR='artifacts/restart'
 node tests/acceptance.mjs
 Remove-Item Env:TEST_SUITE,Env:SAVE_APPDATA
+# 成功CIの通常プレイで生成された出典付きfixtureから未実施3項目を確認
+$env:TEST_SUITE='remaining'; $env:EVIDENCE_DIR='artifacts/remaining'
+node tests/acceptance.mjs
+Remove-Item Env:TEST_SUITE
 # 描画ウィンドウの検証（他担当の GUI 利用と事前調整）
 $env:HEADED='1'
 $env:EVIDENCE_DIR='artifacts/rendered'

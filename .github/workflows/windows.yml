@@ -45,6 +45,12 @@ jobs:
           $env:TEST_SUITE='bugs'
           $env:EVIDENCE_DIR='artifacts/bugs'
           node tests/acceptance.mjs
+      - name: Verify lift reversal, upper recall, and exit prerequisite
+        shell: pwsh
+        run: |
+          $env:TEST_SUITE='remaining'
+          $env:EVIDENCE_DIR='artifacts/remaining'
+          node tests/acceptance.mjs
       - name: Verify collision and alternate order recovery
         shell: pwsh
         run: |

@@ -113,6 +113,14 @@ async function check(id,fn){
   try{await fn();results.push({id,status:'passed',actions:[start,history.length-1]});console.log('PASS',id);}
   catch(error){results.push({id,status:'failed',error:String(error),actions:[start,history.length-1]});throw error;}
 }
+async function savedState(name){
+  if((await tree()).screen==='play')await click('pause');
+  await click('save');
+  const saved=JSON.parse(await readFile(join(appdata,'facility-escape-3d/checkpoint.json'),'utf8'));
+  await writeFile(join(output,name+'-save.json'),JSON.stringify(saved,null,2));
+  await click('resume');
+  return saved;
+}
 try{
   for(let i=0;i<150&&!stdout.includes('listening on');i++){
     if(child.exitCode!==null)throw Error('EXE exited '+child.exitCode+' '+stderr);
@@ -132,7 +140,7 @@ try{
   assert.equal(version.coreVersion,'1.1.2');
   assert.equal(version.runtimeVersion,'1.1.2');
   assert.equal(version.godotPluginVersion,'1.1.2');
-  if(!['bugs','edges','restore'].includes(process.env.TEST_SUITE)){
+  if(!['bugs','edges','restore','remaining'].includes(process.env.TEST_SUITE)){
   await check('T01-title-start',async()=>{
     assert.equal((await tree()).screen,'title');
     await checkpoint('title');
@@ -198,6 +206,48 @@ try{
     await click('reset');assert.equal((await tree()).screen,'play');
     await click('pause');await click('load');assert.equal((await tree()).screen,'play');
   });
+  } else if(process.env.TEST_SUITE==='remaining') {
+    const fixture=await readFile(join(root,'tests/fixtures/upper-checkpoint.json'));
+    const provenance=JSON.parse(await readFile(join(root,'tests/fixtures/upper-checkpoint-source.json'),'utf8'));
+    assert.equal(createHash('sha256').update(fixture).digest('hex'),provenance.checkpointSha256);
+    await writeFile(join(output,'fixture-provenance.json'),JSON.stringify(provenance,null,2));
+    async function restoreFixture(){
+      if((await tree()).screen==='play')await click('pause');
+      await mkdir(join(appdata,'facility-escape-3d'),{recursive:true});
+      await writeFile(join(appdata,'facility-escape-3d/checkpoint.json'),fixture);
+      history.push({action:'test_setup:copy_checkpoint_fixture',testSetup:true,fixtureSha256:provenance.checkpointSha256,activeBugs:[],observed:await tree()});
+      await click('load');assert.equal((await tree()).screen,'play');
+    }
+    await check('T17-moving-lift-reversal',async()=>{
+      await restoreFixture();
+      let s=await state();await use('lift',8,s.y+.575,-18);
+      await sleep(250);
+      s=await state();assert.ok(s.y<2.9&&s.y>.2,'rider descends before reversal');
+      await use('lift',8,s.y+.575,-18);
+      const saved=await savedState('lift-reversed');
+      assert.equal(saved.lift_target,3);assert.ok(saved.lift_y>0&&saved.lift_y<3);
+      await sleep(3200);assert.ok((await state()).y>2.8);
+      await checkpoint('lift-reversal-returned');
+    });
+    await check('T18-upper-landing-recall',async()=>{
+      await restoreFixture();await go(7,-20.5);await go(9,-20.5);
+      await click('crouch');await click('back',285);
+      const s=await state();assert.ok(s.z<=-20,'player stays on upper deck');
+      await use('lift',8,3.6,-18);await sleep(3400);
+      let saved=await savedState('lift-below-upper-deck');
+      assert.equal(saved.lift_y,0);assert.ok(saved.position[1]>2.8,'unoccupied descent');
+      await use('lift_upper',10,4.1,-21);await sleep(3400);
+      saved=await savedState('upper-call-restored');assert.equal(saved.lift_y,3);assert.equal(saved.lift_target,3);
+      await checkpoint('upper-call');
+    });
+    await check('T19-exit-rejects-missing-card',async()=>{
+      await restoreFixture();await go(7,-20.5);await go(8,-20.5);
+      await click('pause');await click('bug_lost_key');await click('save');await click('load');
+      assert.ok(!text(await tree(),'status').includes('key'));
+      await use('exit',8,4.1,-22);assert.equal((await tree()).screen,'play');
+      assert.ok(text(await tree(),'notice').includes('カードキーを確認')||text(await tree(),'notice').includes('Check A/B power and card'));
+      await checkpoint('exit-missing-card-rejected');
+    });
   } else if(process.env.TEST_SUITE==='restore') {
     await check('T15-restart-corrupt-save',async()=>{
       assert.equal((await tree()).screen,'title');

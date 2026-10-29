@@ -21,7 +21,7 @@ for(const run of process.argv.slice(2)){
   await writeFile(join(target,'summary.json'),JSON.stringify({...summary,exe:'dist/FacilityEscape.exe'},null,2));
   await copyFile(join(source,'gua-version.json'),join(target,'gua-version.json'));
   const text=(tree,id)=>tree.nodes.find(n=>n.id===id)?.text;
-  const compact=history.map((h,index)=>({index,action:h.action,activeBugsBefore:h.activeBugsBefore,activeBugs:h.activeBugs??[],requestId:h.receipt.requestId,completion:h.completion,screen:h.observed.screen,status:text(h.observed,'status'),target:text(h.observed,'target'),notice:text(h.observed,'notice'),menu:text(h.observed,'menu_message')}));
+  const compact=history.map((h,index)=>({index,action:h.action,testSetup:h.testSetup,fixtureSha256:h.fixtureSha256,activeBugsBefore:h.activeBugsBefore,activeBugs:h.activeBugs??[],requestId:h.receipt?.requestId,completion:h.completion,screen:h.observed.screen,status:text(h.observed,'status'),target:text(h.observed,'target'),notice:text(h.observed,'notice'),menu:text(h.observed,'menu_message')}));
   await writeFile(join(target,'operations.jsonl'),compact.map(x=>JSON.stringify(x)).join('\n')+'\n');
   await copyFile(join(source,'engine.log'),join(target,'engine.txt'));
   console.log(run,summary.sha256,summary.results.map(r=>r.id+':'+r.status).join(', '));
