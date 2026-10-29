@@ -1,5 +1,7 @@
 # Issue #1 と受入証拠の対応
 
+> 責務変更前のlegacy一覧・証拠です。現行のサンプル回帰／限定smoke／将来Playtest E2Eへの移管は [test-migration.md](test-migration.md) を一次一覧とします。以下の過去EXE成功を、現行source回帰やPlaytestの実行成功へ読み替えません。
+
 ビルド識別は各実行の `summary.json` の EXE SHA256、Gua 1.1.2 の buildId は `gua-version.json`。固定シナリオ `facility-r1`、seed=3001。初期条件は全バグOFF、新規開始（個別バグ比較は明記したIDのみON）。実行証拠を伴わない計画項目は成功に数えない。
 
 | ID | 要件・目的 / 初期状態・手順 | 期待結果・判定根拠 | 実装 | 証拠・現在の範囲 |
@@ -31,7 +33,7 @@ Gua UI Tree とセーブ状態で、所持・電源・画面遷移・位置・�
 
 実行ごとの判定は `summary.json` を一次記録とする。途中で失敗した場合、後続のT番号を未実施と解釈し、行われなかった検証を成功にしない。初回テストでは非表示HUDの残値を誤って参照したため、`state()` は必ず `screen=play` を要求するよう修正した。修正前の記録は受入証拠に使用しない。
 
-## 現在の実行結果
+## 責務変更前の実行記録
 
 2026-10-28、レビュー修正後 Windows EXE SHA256 `3e5505662d595bb83086e7eaf7a9c8160dcc745a97bf8fce696115278c46df9b` で固定回帰16件成功。Gua core/runtime/Godot plugin/adapter は全て1.1.2、buildId `b398e531558f38220baf0b606e7c3f33904a87a5`。探索は固定回帰と別の判断過程を記録した限定セッションであり、網羅性を主張しない。
 

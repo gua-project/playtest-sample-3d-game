@@ -25,6 +25,8 @@
 
 ## 成功の分類
 
+**2026-10-29の責務変更:** 以下の `-VerifyPlayer` は旧方式の記録です。現在は削除しました。`build.ps1` はnonzero exportを必ず失敗とし、source scene回帰や限定起動smokeでexport失敗を成功へ変換しません。配布EXEの全経路E2EはPlaytest側の未実行項目です。旧診断・rawログは保持します。
+
 `build.ps1` は通常、非zero exportで失敗する。`-VerifyPlayer` 指定時だけ、**特定のアクセス違反コード・新規EXE/DLLの存在・当該実行のpack完了**を必要条件とし、生成EXEの通常Gua受入が成功した場合に限り後続のテストを継続する。古いEXEを代替しないようexport前に旧成果物を除去する。未知の終了コード、pack未完了、成果物不足、実EXE受入失敗は継続しない。
 
 CIの緑はプレイヤー受入の結果であり、editor processの正常終了を意味しない。終了コード・pack完了・playerAcceptancePassedを別フィールドで保存し、CI step summaryでもeditorの失敗を表示する。根本原因が残るため、通常のclean export成功とは扱わない。

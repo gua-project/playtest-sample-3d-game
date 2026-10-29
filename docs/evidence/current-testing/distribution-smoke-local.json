@@ -1,0 +1,24 @@
+{
+  "kind": "limited-distribution-smoke",
+  "exeSha256": "d330949389d6ece218a81a6e4365fb84c36888b0afe04b621a0b56a2f25d3935",
+  "dllSha256": "d19cead091216720c295c6d2e66f15d9acc848b88948fb45027f119d901b0bda",
+  "officialDllMatch": true,
+  "peArchitecture": "AMD64",
+  "packSize": 101076,
+  "packOffset": 109160448,
+  "files": [
+    "FacilityEscape.exe",
+    "gua_godot.windows.release.x86_64.dll"
+  ],
+  "exitCode": 0,
+  "timedOut": false,
+  "bridgeStartupMessage": true,
+  "notVerified": [
+    "No protocol connection/attach",
+    "No gameplay actions or clear",
+    "No Scenario/budget/cleanup integration",
+    "No Trace/Recording/Replay",
+    "No rendered or physical-input acceptance",
+    "No clean Windows runtime compatibility"
+  ]
+}

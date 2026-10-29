@@ -1,4 +1,4 @@
-name: Windows EXE acceptance
+name: Source regression and package smoke
 on:
   push:
     branches-ignore: [main]
@@ -6,68 +6,61 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: facility-source-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
-  exe:
+  source-and-package:
     runs-on: windows-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
+    env:
+      DOTNET_GENERATE_ASPNET_CERTIFICATE: 'false'
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      DOTNET_CLI_HOME: ${{ github.workspace }}/.runtime/dotnet
+      NUGET_PACKAGES: ${{ github.workspace }}/vendor/nuget
+      APPDATA: ${{ github.workspace }}/.runtime/ci
     steps:
       - uses: actions/checkout@v4
+      - name: Prepare ignored local working directories
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force vendor,.runtime | Out-Null
+          Set-Content vendor/.gdignore ''
+          Set-Content .runtime/.gdignore ''
+      - name: Official Gua.Testing.Godot source scene regressions
+        id: gua
+        uses: gua-project/gua-tester/godot@9a819e252d714ecec80d0d206f3c8894cb8a13a1 # v3.2
+        with:
+          godot-version: '4.7'
+          godot-status: stable
+          gua-repository: gua-project/gua
+          gua-plugin-tag: gua-v1.1.2
+          gua-plugin-asset-pattern: gua-godot-addon-v1.1.2.zip
+          project-path: .
+          test-project: tests/Facility.Regression/Facility.Regression.csproj
+          test-logger: trx;LogFileName=source-regression.trx
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Get official Godot 4.7 and templates
+      - name: Build Windows package and run limited startup smoke
         shell: pwsh
         run: |
-          New-Item -ItemType Directory -Force vendor | Out-Null
-          Set-Content vendor/.gdignore ''
-          Invoke-WebRequest 'https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_win64.exe.zip' -OutFile vendor/godot.zip
           Invoke-WebRequest 'https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_export_templates.tpz' -OutFile vendor/templates.zip
-          if ((Get-FileHash vendor/godot.zip).Hash.ToLowerInvariant() -ne '02a5312236f4e0209c78bcb2f52135b1963e6b8888c873c9cee81459e60bcd71') { throw 'Godot SHA256 mismatch' }
           if ((Get-FileHash vendor/templates.zip).Hash.ToLowerInvariant() -ne '9714459dc071907c0f3d5f17d608faf69e7cda21331fc5d39c4503ffa4e99eec') { throw 'Template SHA256 mismatch' }
-          Expand-Archive vendor/godot.zip vendor/godot
           Expand-Archive vendor/templates.zip vendor/templates
-      - name: Verify and install official Gua 1.1.2 locally
-        shell: pwsh
-        run: ./scripts/setup-gua.ps1
-      - name: Export and verify real Windows EXE through Gua
-        shell: pwsh
-        run: ./scripts/build.ps1 -Godot "$pwd/vendor/godot/Godot_v4.7-stable_win64_console.exe" -TemplateDirectory "$pwd/vendor/templates/templates" -VerifyPlayer
-      - name: Verify restart and reject corrupted checkpoint
-        shell: pwsh
-        run: |
-          $env:TEST_SUITE='restore'
-          $env:SAVE_APPDATA="$pwd/artifacts/acceptance/appdata"
-          $env:EVIDENCE_DIR='artifacts/restart'
-          node tests/acceptance.mjs
-      - name: Compare individual known defects
-        shell: pwsh
-        run: |
-          $env:TEST_SUITE='bugs'
-          $env:EVIDENCE_DIR='artifacts/bugs'
-          node tests/acceptance.mjs
-      - name: Verify lift reversal, upper recall, and exit prerequisite
-        shell: pwsh
-        run: |
-          $env:TEST_SUITE='remaining'
-          $env:EVIDENCE_DIR='artifacts/remaining'
-          node tests/acceptance.mjs
-      - name: Verify collision and alternate order recovery
-        shell: pwsh
-        run: |
-          $env:TEST_SUITE='edges'
-          $env:EVIDENCE_DIR='artifacts/edges'
-          node tests/acceptance.mjs
-      - name: Verify two-file distribution in an isolated directory
-        shell: pwsh
-        run: node tests/distribution.mjs dist
-      - name: Preserve test evidence
+          $console=Join-Path (Split-Path '${{ steps.gua.outputs.godot-executable }}') 'Godot_v4.7-stable_win64_console.exe'
+          ./scripts/build.ps1 -Godot $console -TemplateDirectory "$pwd/vendor/templates/templates" -Smoke
+      - name: Preserve source regression and limited smoke evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: facility-3d-exe-evidence
-          path: artifacts/
-      - name: Preserve Windows build
-        uses: actions/upload-artifact@v4
+          name: facility-source-regression-and-smoke
+          path: |
+            artifacts/source-regression/
+            artifacts/build/
+            artifacts/distribution-smoke/
+            tests/Facility.Regression/TestResults/
+      - uses: actions/upload-artifact@v4
         with:
           name: facility-3d-windows
           path: dist/
