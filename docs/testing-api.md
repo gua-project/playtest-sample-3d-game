@@ -12,4 +12,4 @@ source回帰に必要なAPI不足は見つかっていない。Playtestの正式
 
 CIは公式 [gua-tester/godot v3.2](https://github.com/gua-project/gua-tester/tree/v3.2/godot)、commit `9a819e252d714ecec80d0d206f3c8894cb8a13a1` を利用する。Godot4.7と `gua-plugin-tag=gua-v1.1.2` を固定した。source importの終了エラーが起きた場合は既存診断を参照して失敗として報告し、actionをコピーして独自runnerで回避しない。
 
-ゲームの `game.gd` は変更していない。既存の独立レビュー1回は旧ゲーム実装と指摘対応に対するもの。今回のテスト/CI/文書変更を新たに独立監査したとは扱わない。GUI確認は未実施。
+ゲームの `game.gd` は変更していない。既存の初回ゲーム実装レビュー1回を維持し、ユーザーの別枠依頼でテスト責務移行差分レビューを1回実施した。監査範囲と欠落期待値1件の修正は `migration-review.md` に記録する。GUI確認は未実施。

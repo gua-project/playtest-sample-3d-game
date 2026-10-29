@@ -23,7 +23,7 @@
 | T09 | key保存前にlost_keyを単独ON。OFFは保持、ONだけ消失 | サンプルS02（2ケース） |
 | T10 | 電池所持、Aへの遠距離/近距離/遮蔽。距離外は両方拒否、through_wall ONの距離内だけ不正起動 | サンプルS03（4ケース） |
 | T11 | 占有帯にいる閉鎖時。OFFは退避可能、door_jam ONだけ停止。reset再試行 | 占有差分S04（2ケース）、通常再試行導線はPlaytest E04未実行 |
-| T12 | 外周/狭路/低天井。壁を越えず、しゃがみで通り、屋根下で立てない | サンプルS05。探索的な全境界はE04未実行 |
+| T12 | 外周/狭路/低天井。壁を越えず、しゃがみで通り、屋根下で立てず、退出後STANDへ戻れる | サンプルS05。探索的な全境界はE04未実行 |
 | T12b | 階段と坂から1m足場へ到達し戻る | Playtest E04未実行 |
 | T13 | 電池なしA、key/電源不足扉、Bなしリフトを拒否。A先行でも帰還しB修理後に進める | Playtest E02未実行。S03の電池消費だけで代替しない |
 | T14 | 目的/制約による探索、失敗から復帰。到達/失敗/不明を区別 | Playtest探索E07未実行。旧86観測はlegacy証拠で、Trace/Recording/Replayではない |
@@ -40,4 +40,4 @@
 
 現行の一次結果はsource回帰のNUnit TRX（host teardownを含む）、`artifacts/source-regression/*/result.json`、限定smokeの `artifacts/distribution-smoke/result.json`。source結果をEXE結果へ、smoke結果をE2Eへ昇格しない。Playtestでの実行と承認待ちGUIは未検証のまま。
 
-独立レビューは既存1回を維持。今回の変更対象はテスト/CI/責務文書で、ゲームGDScriptを変更していない。今回分の独立監査を新たに行った・既に済んでいるとは主張しない。
+独立レビューは初回ゲーム実装1回を維持し、ユーザーが別枠で依頼した移行差分レビューを1回実施した。ゲームGDScriptは変更していない。移行レビューで旧T12の立位復帰期待値の欠落1件を指摘され、S05とE04へ復元した。対象範囲・focused確認・残余リスクは [migration-review.md](migration-review.md) に記録する。ゲーム全体の再監査ではない。

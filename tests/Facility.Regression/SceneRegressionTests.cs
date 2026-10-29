@@ -182,7 +182,7 @@ public sealed class SceneRegressionTests
         Assert.That(Position().X - before.X > .5, Is.EqualTo(!mutant), "normal occupancy must allow escape; mutant must be detected as immobile");
     }
 
-    [Test, Description("S05 / former T12: low ceiling blocks standing; crouch permits passage")]
+    [Test, Description("S05 / former T12: low ceiling blocks standing; crouch permits passage; standing recovers outside")]
     public async Task LowCeilingCrouchBoundary()
     {
         await LoadCheckpoint(data =>
@@ -198,6 +198,9 @@ public sealed class SceneRegressionTests
         Assert.That(Position().Z, Is.LessThan(5));
         await Click("crouch");
         Assert.That(Text("status"), Does.Contain("CROUCH"));
+        await Walk("back", 8);
+        await Click("crouch");
+        Assert.That(Text("status"), Does.Contain("STAND"), "standing must recover after leaving the low ceiling");
     }
 
     private async Task LoadCheckpoint(Action<JsonObject> arrange)
