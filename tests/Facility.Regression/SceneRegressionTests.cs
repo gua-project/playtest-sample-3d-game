@@ -47,7 +47,8 @@ public sealed class SceneRegressionTests
             DiagnosticsOutputDirectory = output,
         });
         diagnostics = host.CreateDiagnosticsSession(TestContext.CurrentContext.Test.FullName, output);
-        await GuaAssertions.WaitForVisibleAsync(host.Context, "start");
+        await GuaAssertions.WaitForVisibleAsync(host.Context, "start",
+            timeout: TimeSpan.FromSeconds(10), pollInterval: TimeSpan.FromMilliseconds(20));
         var version = host.GetVersion();
         Assert.Multiple(() =>
         {

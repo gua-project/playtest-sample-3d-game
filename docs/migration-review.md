@@ -16,6 +16,8 @@
 
 その他の監査結果は整合：正式1.1.2 APIと公式CI部品を使用、checkpoint準備をtest setupとして明示、smokeは接続/ゲーム操作を持たず、旧項目の移管先とPlaytest未実行を区別している。指摘修正のfocused確認は修正者による実行であり、新しい独立レビュー回数へ加算していない。
 
+再検証時の [CI 40809480488](https://github.com/gua-project/playtest-sample-3d-game/actions/runs/40809480488) は13件中12件成功、最初の `CardRetentionAndLostKeyMutation(False)` がSetUpで失敗した。`start`表示の既定1秒待機が `frameSequence=0` でタイムアウトしており、S05の立位復帰assert失敗ではない。正式 `WaitForVisibleAsync` の初回表示待ちだけ10秒へ明示した。再送・例外抑制はせず、期限内に可視にならなければ失敗する。これはCIから見つかった待機設定の修正で、独立監査件数を追加/リセットしていない。
+
 ## 残余リスク
 
 - Playtest E2Eは未実行。handoffは実行可能な正式Scenarioではなく、Build/Scenario/Environment/予算/独立期待値の接続が別途必要。
