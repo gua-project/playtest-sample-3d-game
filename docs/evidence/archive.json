@@ -1,0 +1,19 @@
+{
+  "kind": "external-evidence-archive",
+  "sourceCommit": "573b900e892b76a64b0d56c3490d4bbd7de113ff",
+  "pullRequest": "https://github.com/gua-project/playtest-sample-3d-game/pull/2",
+  "recordUrl": "https://github.com/gua-project/playtest-sample-3d-game/pull/2#issuecomment-6511033350",
+  "archiveUrl": "https://github.com/user-attachments/files/34158707/facility-3d-evidence-573b900.zip",
+  "archiveSha256": "eba80d11fc041bda8e4bbf7dd42ebb10b61b01fc5b4f1125f027c68f2f6dcc72",
+  "archiveBytes": 79775,
+  "manifest": "manifest.json",
+  "manifestPathBase": "repository root at sourceCommit",
+  "archivedOriginalFiles": 58,
+  "singleRunOutputsUntracked": 38,
+  "retainedContextFiles": 20,
+  "contentVerification": "Downloaded from public attachment after comment publication; archive SHA256 and all 58 entry SHA256 values matched original working-tree bytes",
+  "scope": "20 export console/editor logs; 7 engine logs; 6 operation histories; 2 TRX outputs; 3 observed save snapshots",
+  "retention": "PR attachment, independent of Actions artifact expiry; availability can change if the attachment or PR is deleted",
+  "reusableFixtures": "tests/fixtures are retained unchanged and are not part of this archive",
+  "executionStatus": "Historical evidence only; not Playtest E2E completion or resolution of export/CI timing issues"
+}

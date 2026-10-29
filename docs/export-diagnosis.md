@@ -17,7 +17,8 @@
 
 - [baseline 4条件](https://github.com/gua-project/playtest-sample-3d-game/actions/runs/40641143625)
 - [追加2条件](https://github.com/gua-project/playtest-sample-3d-game/actions/runs/40641455828)
-- `docs/evidence/export-controls` の comparison.json と各条件のrawログ
+- `docs/evidence/export-controls` の comparison.json（条件別の終了コード・EXE SHA・pack完了・Godot SHA・OS）
+- 各条件のconsole/editor rawログは [証拠保管先とチェックサム](evidence/archive.json) を参照。ZIPのmanifestは元のリポジトリ相対パスと各ファイルのSHA256を持つ。
 
 この結果から、ゲームの実行処理、GuaAutoAdapterのattach、GuaのGDScript自体を必要とせず、当該CI上でGua native extensionをGodot editorへロードしたときの終了処理に発生範囲を限定できる。Gua/Godotのどの関数が原因かは判定できない。スタックトレースは取得できず、Windows Applicationイベントログのローカル読み取りは権限不足で拒否されたため再試行していない。既存Gua checkoutのgit tag照会も権限不足で止め、別経路で代替していない。
 
@@ -29,7 +30,7 @@
 
 再現時はGodot 4.7、正式Gua 1.1.2、同じWindows環境で上記の最小Node3D＋正式addonとaddonなしを対照にし、終了コード・editorログ・対象DLL/EXEのSHA・pack完了を同一runで保存する。既存の [export-diagnostics workflow](../.github/workflows/export-diagnostics.yml) は手動診断用で、配布受入CIとは区別する。通常のビルド方法は [README](../README.md) を参照する。
 
-旧 `-VerifyPlayer` による継続条件、当時のCI分類、特定SHAの配布物検査結果は [PRの検証記録](https://github.com/gua-project/playtest-sample-3d-game/pull/2#issuecomment-6487371013) に保存した履歴であり、現行の実行方法ではない。raw証拠は `docs/evidence/export-controls` と `docs/evidence/distribution` に保持する。
+旧 `-VerifyPlayer` による継続条件、当時のCI分類、特定SHAの配布物検査結果は [PRの検証記録](https://github.com/gua-project/playtest-sample-3d-game/pull/2#issuecomment-6487371013) に保存した履歴であり、現行の実行方法ではない。raw証拠は [当該PRへの添付ZIP](https://github.com/gua-project/playtest-sample-3d-game/pull/2#issuecomment-6511033350) にあり、Gitには比較・環境・版・hash・結論を残す。添付はActions artifactの期限とは独立しているが、添付自体が削除された場合の存続を保証しない。
 
 ## 配布前提と未検証範囲
 

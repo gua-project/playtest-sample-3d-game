@@ -10,4 +10,4 @@
 - 保存を作成していない独立APPDATAでロードしたところ、pause画面に無効チェックポイントの表示。resume後も電池、しゃがみ、位置を保持していた。
 - 通常の中断メニューから reset を選び、受付(0,0,8)、STAND、空の所持品、A/B未復旧へ戻ることを確認した。
 
-これは headless Windows EXE の状態観測である。描画、実入力、音、全経路の探索、新たな不具合が存在しないことは判定していない。時刻の間隔には、観測を読んで次の操作を決めた待機時間を含む。操作・受付・完了・観測と判断メモは `operations.jsonl`、ビルド識別と目的は `session.json` に保存。
+これは headless Windows EXE の状態観測である。描画、実入力、音、全経路の探索、新たな不具合が存在しないことは判定していない。時刻の間隔には、観測を読んで次の操作を決めた待機時間を含む。操作・受付・完了・観測と判断メモは [外部保管ZIP](../archive.json) 内の元パス `docs/evidence/exploration/operations.jsonl`、ビルド識別と目的は [session.json](session.json) に保存。

@@ -12,7 +12,7 @@
 
 | 重要度 | 指摘 | 修正 | 検証 |
 |---|---|---|---|
-| P2 | 旧T12の「屋根から戻った後にSTANDへ復帰できる」がS05とE04から落ちていた。永久にしゃがみから戻れない退行を見逃す | S05へ通常の後退8回→しゃがみ切替→STAND assertを復元。E04独立期待値と移管表にも明記 | 修正者が正式source hostでS05のみ再検証、1件成功。`docs/evidence/migration-review/source-S05-local.trx`。修正後PR HEADのCIはChecksを一次記録とする |
+| P2 | 旧T12の「屋根から戻った後にSTANDへ復帰できる」がS05とE04から落ちていた。永久にしゃがみから戻れない退行を見逃す | S05へ通常の後退8回→しゃがみ切替→STAND assertを復元。E04独立期待値と移管表にも明記 | 修正者が正式source hostでS05のみ再検証、1件成功。[証拠ZIP](evidence/archive.json) 内 `docs/evidence/migration-review/source-S05-local.trx`。修正後PR HEADのCIはChecksを一次記録とする |
 
 その他の監査結果は整合：正式1.1.2 APIと公式CI部品を使用、checkpoint準備をtest setupとして明示、smokeは接続/ゲーム操作を持たず、旧項目の移管先とPlaytest未実行を区別している。指摘修正のfocused確認は修正者による実行であり、新しい独立レビュー回数へ加算していない。
 

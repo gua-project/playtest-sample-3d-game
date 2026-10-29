@@ -65,14 +65,16 @@ Playtest E2E、描画・実入力、扉反転通行の全境界、広範な保�
 
 ## 過去の検証記録
 
-旧EXE runnerの実行日時・SHA・T番号別の証拠参照・無効な旧判定の説明は [PRの検証記録](https://github.com/gua-project/playtest-sample-3d-game/pull/2#issuecomment-6487371013) と [整理前の文書](https://github.com/gua-project/playtest-sample-3d-game/blob/d97c6fb2582448aee5d3c7981acb36beccad5ea4/docs/test-matrix.md) に保持する。raw証拠は既存の `docs/evidence` にあり、旧実行の成功は現行source回帰やPlaytestの成功を意味しない。実行ごとの最新結果はPRに紐付いたCI runと成果物を参照する。
+旧EXE runnerの実行日時・SHA・T番号別の証拠参照・無効な旧判定の説明は [PRの検証記録](https://github.com/gua-project/playtest-sample-3d-game/pull/2#issuecomment-6487371013) と [整理前の文書](https://github.com/gua-project/playtest-sample-3d-game/blob/d97c6fb2582448aee5d3c7981acb36beccad5ea4/docs/test-matrix.md) に保持する。単発rawログ・操作履歴・TRX・観測saveの保管先は [archive.json](evidence/archive.json)。元の証拠パスはZIP manifest内のパスとして解決する。旧実行の成功は現行source回帰やPlaytestの成功を意味しない。実行ごとの最新結果はPRに紐付いたCI runと成果物を参照する。
 
 ## 証拠と再検証の範囲
 
-旧実装はGit commit `764593e`、旧PR CIは [40800013008](https://github.com/gua-project/playtest-sample-3d-game/actions/runs/40800013008)。`docs/evidence` のJSON/操作履歴/rawログとfixtureが、ビルドSHA、bug ID、seed、初期条件、実測値の出典となる。これらは旧サンプルrunnerによるEXE証拠であり、Playtestで実行した証拠ではない。旧ID別の証拠パスと実行報告は [PRの検証記録](https://github.com/gua-project/playtest-sample-3d-game/pull/2#issuecomment-6487371013) にある。
+旧実装はGit commit `764593e`、旧PR CIは [40800013008](https://github.com/gua-project/playtest-sample-3d-game/actions/runs/40800013008)。`docs/evidence` に残す版・比較・結果要約・fixture出典と、外部保管ZIPの操作履歴/rawログが、ビルドSHA、bug ID、seed、初期条件、実測値の出典となる。これらは旧サンプルrunnerによるEXE証拠であり、Playtestで実行した証拠ではない。旧ID別の証拠パスと実行報告は [PRの検証記録](https://github.com/gua-project/playtest-sample-3d-game/pull/2#issuecomment-6487371013) にある。
 
 現行の一次結果はsource回帰のNUnit TRX（host teardownを含む）、`artifacts/source-regression/*/result.json`、限定smokeの `artifacts/distribution-smoke/result.json`。source結果をEXE結果へ、smoke結果をE2Eへ昇格しない。Playtestでの実行と描画GUIは未検証のまま。
 
 CI成果物は保存期限があるため、リンクがあるだけで恒久保存済みとは扱わない。リポジトリ内の `docs/evidence` とCI artifactは区別し、再現に必要な対象commit・SHA・初期条件をPRの検証記録へ結び付ける。
+
+再利用する入力は `tests/fixtures` で管理する。単発出力はGit管理せず、source回帰・smoke・export診断は既定の `artifacts/` 以下へ出力する。旧出力の要約スクリプトは `node scripts/summarize-evidence.mjs <run>` で `artifacts/<run>` を読み、`artifacts/evidence-summaries/<run>` へ書く。必要な調査証拠は公開範囲と秘密・個人情報を点検し、当該PR/issueへの添付等へ保存して再取得・SHA/内容一致を確認してから参照を残す。GitにZIP自体を追加したり、期限付きCI artifactだけへ依存したりしない。
 
 現在、CIで `Click load` の完了待ちtimeoutに続いて、同じrequestの未消費完了eventをstrict teardownが検出した断続的な失敗の記録がある。同一HEADの一度の再実行は成功したが根本原因は未確定で、解決済みとはしない。失敗・再実行・比較の出典は [PR検証記録](https://github.com/gua-project/playtest-sample-3d-game/pull/2#issuecomment-6487520105)。timeout、teardown、nonzero exportを抑制して成功へ変えず、各attemptを区別する。

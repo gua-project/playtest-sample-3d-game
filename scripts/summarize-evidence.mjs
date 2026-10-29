@@ -3,7 +3,7 @@ import {resolve,join} from 'node:path';
 const root=resolve(import.meta.dirname,'..');
 for(const run of process.argv.slice(2)){
   if(!/^[a-z][a-z0-9-]*$/.test(run))throw Error('Invalid run name');
-  const source=join(root,'artifacts',run),target=join(root,'docs/evidence',run);
+  const source=join(root,'artifacts',run),target=join(root,'artifacts','evidence-summaries',run);
   if(run==='exploration'){
     const session=JSON.parse(await readFile(join(source,'session.json'),'utf8'));
     const history=JSON.parse(await readFile(join(source,'history.json'),'utf8'));
@@ -12,7 +12,7 @@ for(const run of process.argv.slice(2)){
     const text=(tree,id)=>tree.nodes.find(n=>n.id===id)?.text;
     await writeFile(join(target,'operations.jsonl'),history.map((h,index)=>JSON.stringify({index,command:h.command,receipt:h.receipt,completion:h.completion,screen:h.observed.screen,status:text(h.observed,'status'),target:text(h.observed,'target'),notice:text(h.observed,'notice'),menu:text(h.observed,'menu_message')})).join('\n')+'\n');
     await copyFile(join(source,'engine.log'),join(target,'engine.txt'));
-    console.log(run,session.sha256,session.events+' exploratory observations; see assessment.md');
+    console.log(run,session.sha256,session.events+' exploratory observations; see docs/evidence/exploration/assessment.md');
     continue;
   }
   const summary=JSON.parse(await readFile(join(source,'summary.json'),'utf8'));
