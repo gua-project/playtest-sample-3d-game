@@ -1,6 +1,6 @@
 # Windows editor 終了クラッシュの限定対照
 
-正式 Gua 1.1.2 と Godot 4.7 を固定し、元の作業treeを変更しない使い捨てコピーで調べた。共有インストール、セキュリティ設定、他repoは変更していない。
+未解決の終了クラッシュに対する限定的な診断記録。正式 Gua 1.1.2 と Godot 4.7 を固定した使い捨てコピーでの対照結果を保持する。通常の受入結果や根本原因の確定とは扱わない。
 
 | 条件 | ローカル Windows | Windows CI (10.0.26100) |
 |---|---|---|
@@ -23,16 +23,16 @@
 
 正式1.1.2のバイナリを維持したゲーム側の修正は、この範囲では見つかっていない。エディター終了クラッシュの解消には、上流のnative extension/Godot連携の調査が必要となる可能性がある。これは推論であり、根本原因の確定ではない。
 
-## 成功の分類
+## 現行のビルド判定
 
-**2026-10-29の責務変更:** 以下の `-VerifyPlayer` は旧方式の記録です。現在は削除しました。`build.ps1` はnonzero exportを必ず失敗とし、source scene回帰や限定起動smokeでexport失敗を成功へ変換しません。配布EXEの全経路E2EはPlaytest側の未実行項目です。旧診断・rawログは保持します。
+この終了クラッシュは未解決。`build.ps1` はnonzero exportを必ず失敗とし、source scene回帰や限定起動smokeでexport失敗を成功へ変換しない。EXEが生成されpack完了が記録されても、正常終了や配布受入完了の証拠にはならない。
 
-`build.ps1` は通常、非zero exportで失敗する。`-VerifyPlayer` 指定時だけ、**特定のアクセス違反コード・新規EXE/DLLの存在・当該実行のpack完了**を必要条件とし、生成EXEの通常Gua受入が成功した場合に限り後続のテストを継続する。古いEXEを代替しないようexport前に旧成果物を除去する。未知の終了コード、pack未完了、成果物不足、実EXE受入失敗は継続しない。
+再現時はGodot 4.7、正式Gua 1.1.2、同じWindows環境で上記の最小Node3D＋正式addonとaddonなしを対照にし、終了コード・editorログ・対象DLL/EXEのSHA・pack完了を同一runで保存する。既存の [export-diagnostics workflow](../.github/workflows/export-diagnostics.yml) は手動診断用で、配布受入CIとは区別する。通常のビルド方法は [README](../README.md) を参照する。
 
-CIの緑はプレイヤー受入の結果であり、editor processの正常終了を意味しない。終了コード・pack完了・playerAcceptancePassedを別フィールドで保存し、CI step summaryでもeditorの失敗を表示する。根本原因が残るため、通常のclean export成功とは扱わない。
+旧 `-VerifyPlayer` による継続条件、当時のCI分類、特定SHAの配布物検査結果は [PRの検証記録](https://github.com/gua-project/playtest-sample-3d-game/pull/2#issuecomment-6487371013) に保存した履歴であり、現行の実行方法ではない。raw証拠は `docs/evidence/export-controls` と `docs/evidence/distribution` に保持する。
 
-## 配布物の完全性と限界
+## 配布前提と未検証範囲
 
-CI成果物 SHA256 `22ddebf71db0facb43e9d8c96ed4fcbdeaaf24c3027da748e69d5fd0ce938764` について、AMD64 PE、PCK header/footer とpayload境界、正式Gua release DLLのSHA256一致を検査した。EXEとDLLだけを使い捨てフォルダへコピーし、そのフォルダを作業ディレクトリとして起動、Guaで通常受入8件が通過した。GUA_NATIVE_DIR等のoverrideも空にした。証拠は `docs/evidence/distribution` と `artifacts/distribution`。
+配布にはAMD64 EXE（PCK内蔵）と正式Gua release DLLの両方が必要。限定smokeはPE/PCK境界とDLLのSHA256一致、2ファイルからの起動・終了を確認する。PCK全entryのMD5網羅検査、protocol接続、全経路E2E、全Windowsへの可搬性を保証しない。配布EXEの統合E2EはPlaytest側の未実行項目である。
 
-これはPCK全entryのMD5網羅検査や、全Windowsへの可搬性検証ではない。DLLはMicrosoft Visual C++ x64 runtime (`MSVCP140.dll`, `MSVCP140_2.dll`, `VCRUNTIME140.dll`, `VCRUNTIME140_1.dll`) を参照する。既存ランタイムがあるこのPC/CIでは動作したが、未導入のクリーンWindowsは未検証。ランタイムを新規インストールしたり、システムDLLを無断で配布物に追加したりしていない。配布前提はREADMEにも明記した。
+DLLはMicrosoft Visual C++ x64 runtime (`MSVCP140.dll`, `MSVCP140_2.dll`, `VCRUNTIME140.dll`, `VCRUNTIME140_1.dll`) を参照する。未導入のクリーンWindowsは未検証で、既存ランタイムを配布前提とする。システムDLLは配布物に含めない。

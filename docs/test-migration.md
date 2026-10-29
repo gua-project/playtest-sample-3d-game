@@ -1,6 +1,6 @@
 # サンプル回帰・限定smoke・Playtest E2Eへの移管
 
-2026-10-29のユーザー方針を適用。source scene起動は正式 `Gua.Testing.Godot 1.1.2`、固定操作・期待値・待機は `Gua.Testing 1.1.2`。両NuGetのrepository commitは `b398e531558f38220baf0b606e7c3f33904a87a5`。配布EXEのE2E基盤はPlaytest側に置き、サンプル内へ第二のrunnerを作らない。
+source scene起動は正式 `Gua.Testing.Godot 1.1.2`、固定操作・期待値・待機は `Gua.Testing 1.1.2`。両NuGetのrepository commitは `b398e531558f38220baf0b606e7c3f33904a87a5`。配布EXEのE2E基盤はPlaytest側に置き、サンプル内へ第二のrunnerを作らない。
 
 ## 現行回帰
 
@@ -19,7 +19,7 @@
 | T05 | A/keyで扉を開き通過。閉鎖面を通常移動で越える | Playtest E01/E04未実行。占有安全だけS04 |
 | T06 | リフト移動中pause/save/load。停止中は進まず、搭乗者と行先を保持 | Playtest E03/E05未実行。S01静的復元で代替しない |
 | T07 | 出口→result→replayで初期化 | reset部分S01。通常クリア後の結果/再プレイはPlaytest E01未実行 |
-| T08 | ja/en、1280/960、reset/load | 設定値S01。描画レイアウト/実入力はPlaytest E06、GUI承認待ち・未実行 |
+| T08 | ja/en、1280/960、reset/load | 設定値S01。描画レイアウト/実入力はPlaytest E06、未実行 |
 | T09 | key保存前にlost_keyを単独ON。OFFは保持、ONだけ消失 | サンプルS02（2ケース） |
 | T10 | 電池所持、Aへの遠距離/近距離/遮蔽。距離外は両方拒否、through_wall ONの距離内だけ不正起動 | サンプルS03（4ケース） |
 | T11 | 占有帯にいる閉鎖時。OFFは退避可能、door_jam ONだけ停止。reset再試行 | 占有差分S04（2ケース）、通常再試行導線はPlaytest E04未実行 |
@@ -36,8 +36,6 @@
 
 ## 証拠と再検証の範囲
 
-`docs/evidence` の従来JSON/操作履歴/rawログは削除・成功書換えをしていない。旧実装はGit commit `764593e`、旧PR CIは [40800013008](https://github.com/gua-project/playtest-sample-3d-game/actions/runs/40800013008)。ビルドSHA、bug ID、seed、初期条件、実測値は各summary/operations/fixtureに残る。これらは旧サンプルrunnerによるEXE証拠であり、Playtestで実行した証拠ではない。
+旧実装はGit commit `764593e`、旧PR CIは [40800013008](https://github.com/gua-project/playtest-sample-3d-game/actions/runs/40800013008)。`docs/evidence` のJSON/操作履歴/rawログとfixtureが、ビルドSHA、bug ID、seed、初期条件、実測値の出典となる。これらは旧サンプルrunnerによるEXE証拠であり、Playtestで実行した証拠ではない。旧ID別の証拠パスと実行報告は [PRの検証記録](https://github.com/gua-project/playtest-sample-3d-game/pull/2#issuecomment-6487371013) にある。
 
-現行の一次結果はsource回帰のNUnit TRX（host teardownを含む）、`artifacts/source-regression/*/result.json`、限定smokeの `artifacts/distribution-smoke/result.json`。source結果をEXE結果へ、smoke結果をE2Eへ昇格しない。Playtestでの実行と承認待ちGUIは未検証のまま。
-
-独立レビューは初回ゲーム実装1回を維持し、ユーザーが別枠で依頼した移行差分レビューを1回実施した。ゲームGDScriptは変更していない。移行レビューで旧T12の立位復帰期待値の欠落1件を指摘され、S05とE04へ復元した。対象範囲・focused確認・残余リスクは [migration-review.md](migration-review.md) に記録する。ゲーム全体の再監査ではない。
+現行の一次結果はsource回帰のNUnit TRX（host teardownを含む）、`artifacts/source-regression/*/result.json`、限定smokeの `artifacts/distribution-smoke/result.json`。source結果をEXE結果へ、smoke結果をE2Eへ昇格しない。Playtestでの実行と描画GUIは未検証のまま。

@@ -24,7 +24,7 @@
 | 限定配布smoke | PE/PCK/公式DLLハッシュ、2ファイルでのheadless起動・終了・bridge起動メッセージ | protocol接続、通常操作、クリア、Scenario、Trace/Recording/Replay |
 | Playtest E2E | **未実行**。配布EXEのlaunch/attach、探索、Scenario、予算、cleanup、Trace/Recording/ReplayをPlaytest側が所有 | 既存サンプル内のEXEテスト成功をPlaytest完成の証拠にはしない |
 
-旧JS wire clientと全経路EXE／探索runnerは現行テストから削除しました。単にC#へ全量移植していません。移管対応・初期条件・独立期待値・過去証拠は [test-migration.md](docs/test-migration.md)、Playtestへの接続情報は [playtest/handoff.json](playtest/handoff.json) にあります。このhandoffは実行可能なPlaytest Scenarioではありません。
+テスト契約・初期条件・独立期待値・旧IDとの対応は [test-migration.md](docs/test-migration.md)、判定制約と証拠の扱いは [test-matrix.md](docs/test-matrix.md)、Playtestへの接続情報は [playtest/handoff.json](playtest/handoff.json) にあります。このhandoffは実行可能なPlaytest Scenarioではありません。配布EXEの全経路・探索runnerはPlaytest側が所有します。
 
 ## サンプル回帰を実行する
 
@@ -59,4 +59,8 @@ export終了時クラッシュの既存診断は [export-diagnosis.md](docs/expo
 | `through_wall` | 電池所持、距離内、Aへ遮蔽物越しに照準・E | 拒否して電池保持 / 壁越しに起動し消費 |
 | `door_jam` | 閉鎖時刻に扉の占有帯へ留まる | 閉鎖延期し退避可能 / 移動不能。ロードまたはresetで再試行 |
 
-GUI承認待ちの描画・文字欠け・実キーボード／右ドラッグは未検証です。独立レビューは初回ゲーム実装1回を維持し、ユーザーの別枠依頼によるテスト責務移行1回を追加しました。範囲・指摘1件の修正・残余リスクは [migration-review.md](docs/migration-review.md) に記録し、ゲーム全体を再監査したとは扱いません。mainへの実装マージはユーザーが行います。
+## 現在の制限と記録
+
+描画・文字欠け・実キーボード／右ドラッグは未検証です。Playtest E2E、広範な保存状態の組合せ、未導入クリーンWindowsでの互換性も未検証です。音は未実装で品質を判定できません。export終了クラッシュは未解決です。source回帰や限定smokeの成功から、これらの受入完了を主張しません。
+
+実行ごとのSHA・結果・ログはCI成果物と [PRの検証記録](https://github.com/gua-project/playtest-sample-3d-game/pull/2#issuecomment-6487371013) を参照してください。既存の [レビュー台帳](docs/review.md) と [移行レビュー記録](docs/migration-review.md) は範囲を限定した履歴資料であり、現行仕様や最新の合否一覧ではありません。
