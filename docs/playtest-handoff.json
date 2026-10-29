@@ -25,13 +25,13 @@
   "knownBugVariants": ["lost_key", "through_wall", "door_jam"],
   "budgetBinding": {"status": "required from Playtest caller; not selected or consumed here", "timeLimitSeconds": null, "actionLimit": null, "modelTokenOrCostLimit": null},
   "scenarioBindings": [
-    {"id": "E01", "goal": "ordinary start, collect, power, door, lift, escape, replay", "legacyTests": ["T02", "T05", "T07"], "oracle": "docs/playtest-oracles.md#e01"},
-    {"id": "E02", "goal": "alternate order and unavailable prerequisites", "legacyTests": ["T04", "T13", "T19"], "oracle": "docs/playtest-oracles.md#e02"},
-    {"id": "E03", "goal": "save during progress/motion and relaunch/attach restore", "legacyTests": ["T03", "T06", "T15"], "oracle": "docs/playtest-oracles.md#e03"},
-    {"id": "E04", "goal": "physical boundaries, moving door and retry", "legacyTests": ["T05", "T11", "T12", "T12b"], "oracle": "docs/playtest-oracles.md#e04"},
-    {"id": "E05", "goal": "unoccupied lift recall, moving reversal and rider continuity", "legacyTests": ["T16", "T17", "T18"], "oracle": "docs/playtest-oracles.md#e05"},
-    {"id": "E06", "goal": "rendered language/layout/physical input validation", "legacyTests": ["T08"], "oracle": "docs/playtest-oracles.md#e06"},
-    {"id": "E07", "goal": "goal-and-constraint exploration with failures/unknowns preserved", "legacyTests": ["T14"], "oracle": "docs/playtest-oracles.md#e07"}
+    {"id": "E01", "goal": "ordinary start, collect, power, door, lift, escape, replay", "legacyTests": ["T02", "T05", "T07"], "oracle": "docs/playtest-handoff.md#e01"},
+    {"id": "E02", "goal": "alternate order and unavailable prerequisites", "legacyTests": ["T04", "T13", "T19"], "oracle": "docs/playtest-handoff.md#e02"},
+    {"id": "E03", "goal": "save during progress/motion and relaunch/attach restore", "legacyTests": ["T03", "T06", "T15"], "oracle": "docs/playtest-handoff.md#e03"},
+    {"id": "E04", "goal": "physical boundaries, moving door and retry", "legacyTests": ["T05", "T11", "T12", "T12b"], "oracle": "docs/playtest-handoff.md#e04"},
+    {"id": "E05", "goal": "unoccupied lift recall, moving reversal and rider continuity", "legacyTests": ["T16", "T17", "T18"], "oracle": "docs/playtest-handoff.md#e05"},
+    {"id": "E06", "goal": "rendered language/layout/physical input validation", "legacyTests": ["T08"], "oracle": "docs/playtest-handoff.md#e06"},
+    {"id": "E07", "goal": "goal-and-constraint exploration with failures/unknowns preserved", "legacyTests": ["T14"], "oracle": "docs/playtest-handoff.md#e07"}
   ],
   "owner": "Gua Playtest",
   "runnerResponsibilities": ["launch or attach", "Scenario validation", "budgets", "owned-process cleanup and attach ownership", "Trace", "Recording", "Replay", "evidence correlation to build/scenario/environment/oracle"],
