@@ -1,0 +1,39 @@
+{
+  "cases": [
+    {
+      "scriptError": false,
+      "case": "minimal-no-addon",
+      "sha256": "8f9a6dd8c1a5e7844cfd888d51709f17b2c91ec2ac6f4c95daf2c3183f684a1f",
+      "exeExists": true,
+      "packComplete": true,
+      "exitCode": 0
+    },
+    {
+      "scriptError": false,
+      "case": "minimal-addon",
+      "sha256": "9ace8e83ed8924eaf8f49b166d49fd178b39ded3fa087472b0dd49f123437221",
+      "exeExists": true,
+      "packComplete": true,
+      "exitCode": 0
+    },
+    {
+      "scriptError": false,
+      "case": "game-no-addon",
+      "sha256": "80a5128ad14074f7ae161042377e96b25c77063626a421d8e6ef7e7b288e89b7",
+      "exeExists": true,
+      "packComplete": true,
+      "exitCode": 0
+    },
+    {
+      "scriptError": false,
+      "case": "game-addon",
+      "sha256": "718d43ee7ab946626410dcff3507f810726e45378ee211d430420fa0d5407bbd",
+      "exeExists": true,
+      "packComplete": true,
+      "exitCode": 0
+    }
+  ],
+  "godot": "d8055fb8c7e7f5010d7439ec69be051554055dae55a265f8647bd7301c34161c",
+  "windowsFaultEvents": "Not collected: local Application log read denied; no retry",
+  "os": "Microsoft Windows NT 10.0.26300.0"
+}

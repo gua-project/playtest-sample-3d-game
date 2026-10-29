@@ -1,0 +1,37 @@
+{
+	"auxiliary": true,
+	"bugs": [],
+	"collected": [
+		"tool",
+		"battery",
+		"key"
+	],
+	"crouching": false,
+	"door_open": false,
+	"door_timer": -0.0166666666666575,
+	"elapsed": 37.4499999999992,
+	"generator": true,
+	"inventory": [
+		"tool",
+		"key"
+	],
+	"jammed": false,
+	"language": "ja",
+	"lift_target": 3.0,
+	"lift_y": 3.0,
+	"pitch": -0.523598551750183,
+	"position": [
+		7.2000093460083,
+		3.02265429496765,
+		-16.8000431060791
+	],
+	"run": 1,
+	"scenario": "facility-r1",
+	"schema": 1,
+	"seed": 3001,
+	"window": [
+		1280,
+		800
+	],
+	"yaw": -0.523598194122314
+}

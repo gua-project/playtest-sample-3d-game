@@ -1,0 +1,50 @@
+{
+  "scenario": "facility-r1",
+  "seed": 3001,
+  "bugConfigurations": [
+    [],
+    [
+      "lost_key"
+    ],
+    [
+      "through_wall"
+    ],
+    [
+      "door_jam"
+    ]
+  ],
+  "mode": "headless-exe",
+  "exe": "dist/FacilityEscape.exe",
+  "sha256": "3e5505662d595bb83086e7eaf7a9c8160dcc745a97bf8fce696115278c46df9b",
+  "results": [
+    {
+      "id": "T09-lost-key-differential",
+      "status": "passed",
+      "actions": [
+        0,
+        57
+      ]
+    },
+    {
+      "id": "T10-wall-distance-differential",
+      "status": "passed",
+      "actions": [
+        58,
+        151
+      ]
+    },
+    {
+      "id": "T11-door-jam-differential-retry",
+      "status": "passed",
+      "actions": [
+        152,
+        344
+      ]
+    }
+  ],
+  "unverified": [
+    "Audio subjective quality",
+    "Human physical keyboard full run",
+    "Unlisted geometry boundaries and exploratory coverage"
+  ]
+}

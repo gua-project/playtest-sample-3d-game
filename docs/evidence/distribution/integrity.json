@@ -1,0 +1,15 @@
+{
+  "source": "CI run 40639961593 / facility-3d-windows",
+  "staging": "disposable temporary folder (EXE + DLL only)",
+  "exeSha256": "22ddebf71db0facb43e9d8c96ed4fcbdeaaf24c3027da748e69d5fd0ce938764",
+  "dllSha256": "d19cead091216720c295c6d2e66f15d9acc848b88948fb45027f119d901b0bda",
+  "officialDllMatch": true,
+  "peArchitecture": "AMD64",
+  "packSize": 101044,
+  "packOffset": 109160448,
+  "files": [
+    "FacilityEscape.exe",
+    "gua_godot.windows.release.x86_64.dll"
+  ],
+  "cleanDirectoryAcceptancePassed": true
+}

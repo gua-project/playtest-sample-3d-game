@@ -1,0 +1,81 @@
+{
+  "scenario": "facility-r1",
+  "seed": 3001,
+  "bugConfigurations": [
+    []
+  ],
+  "mode": "headless-exe",
+  "exe": "dist/FacilityEscape.exe",
+  "sha256": "3e5505662d595bb83086e7eaf7a9c8160dcc745a97bf8fce696115278c46df9b",
+  "results": [
+    {
+      "id": "T01-title-start",
+      "status": "passed",
+      "actions": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "T02-pickups",
+      "status": "passed",
+      "actions": [
+        1,
+        26
+      ]
+    },
+    {
+      "id": "T03-card-checkpoint",
+      "status": "passed",
+      "actions": [
+        27,
+        58
+      ]
+    },
+    {
+      "id": "T04-reverse-power-order",
+      "status": "passed",
+      "actions": [
+        59,
+        120
+      ]
+    },
+    {
+      "id": "T05-door",
+      "status": "passed",
+      "actions": [
+        121,
+        142
+      ]
+    },
+    {
+      "id": "T06-lift-pause-save-load",
+      "status": "passed",
+      "actions": [
+        143,
+        160
+      ]
+    },
+    {
+      "id": "T07-exit-replay",
+      "status": "passed",
+      "actions": [
+        161,
+        175
+      ]
+    },
+    {
+      "id": "T08-language-size-reset",
+      "status": "passed",
+      "actions": [
+        176,
+        181
+      ]
+    }
+  ],
+  "unverified": [
+    "Audio subjective quality",
+    "Human physical keyboard full run",
+    "Unlisted geometry boundaries and exploratory coverage"
+  ]
+}

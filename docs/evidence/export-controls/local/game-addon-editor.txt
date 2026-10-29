@@ -1,0 +1,46 @@
+Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
+
+ERROR: Safe save failed. This may be a permissions problem, but also may happen because you are running a paranoid antivirus. If this is the case, please switch to Windows Defender or disable the 'safe save' option in editor settings. This makes it work, but increases the risk of file corruption in a crash.
+   at: _close (drivers/windows/file_access_windows.cpp:277)
+[   0% ] first_scan_filesystem | Started プロジェクトの初期化 (5 steps)
+[   0% ] first_scan_filesystem | ファイル構造をスキャン中...
+[  16% ] first_scan_filesystem | グローバルクラス名を読み込み中...
+[  33% ] first_scan_filesystem | GDExtensionを検証中...
+[  50% ] first_scan_filesystem | 自動読み込みスクリプトを作成中...
+[  66% ] first_scan_filesystem | プラグインを初期化中...
+[  83% ] first_scan_filesystem | ファイルスキャンを開始...
+[ DONE ] first_scan_filesystem
+
+[   0% ] update_scripts_classes | Started グローバルクラスを登録中... (6 steps)
+[   0% ] update_scripts_classes | GuaAutoAdapter
+[  14% ] update_scripts_classes | 
+[  28% ] update_scripts_classes | GuaSpatialReader
+[  42% ] update_scripts_classes | 
+[  57% ] update_scripts_classes | 
+[  71% ] update_scripts_classes | 
+[ DONE ] update_scripts_classes
+
+[   0% ] savepack | Started パック中 (102 steps)
+[   1% ] savepack | ファイルの保存中: res://addons/gua/gua.gdextension
+[  13% ] savepack | ファイルの保存中: res://addons/gua/gua_auto_adapter.gdc
+[  26% ] savepack | ファイルの保存中: res://addons/gua/gua_observe_owner.gdc
+[  37% ] savepack | ファイルの保存中: res://addons/gua/gua_spatial.gdc
+[  50% ] savepack | ファイルの保存中: res://addons/gua/gua_webmcp_bridge.gdc
+[  62% ] savepack | ファイルの保存中: res://addons/gua/plugin.gdc
+[  74% ] savepack | ファイルの保存中: res://game.gdc
+[  86% ] savepack | ファイルの保存中: res://.godot/exported/133200997/export-3070c538c03ee49b7677ff960a3f5195-main.scn
+[  86% ] savepack | ファイルの保存中: res://addons/gua/gua_auto_adapter.gd.remap
+[  86% ] savepack | ファイルの保存中: res://addons/gua/gua_observe_owner.gd.remap
+[  86% ] savepack | ファイルの保存中: res://addons/gua/gua_spatial.gd.remap
+[  86% ] savepack | ファイルの保存中: res://addons/gua/gua_webmcp_bridge.gd.remap
+[  86% ] savepack | ファイルの保存中: res://addons/gua/plugin.gd.remap
+[  86% ] savepack | ファイルの保存中: res://game.gd.remap
+[  86% ] savepack | ファイルの保存中: res://main.tscn.remap
+[  86% ] savepack | ファイルの保存中: res://.godot/global_script_class_cache.cfg
+[  86% ] savepack | ファイルの保存中: res://.godot/extension_list.cfg
+[  86% ] savepack | ファイルの保存中: res://.godot/uid_cache.bin
+[  86% ] savepack | ファイルの保存中: res://project.binary
+[ DONE ] savepack
+
+ERROR: Safe save failed. This may be a permissions problem, but also may happen because you are running a paranoid antivirus. If this is the case, please switch to Windows Defender or disable the 'safe save' option in editor settings. This makes it work, but increases the risk of file corruption in a crash.
+   at: _close (drivers/windows/file_access_windows.cpp:277)
