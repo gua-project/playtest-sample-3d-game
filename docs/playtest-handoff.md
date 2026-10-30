@@ -1,0 +1,43 @@
+# Playtest接続条件と独立期待値（未実行）
+
+以下はIssue #1から記述した期待値であり、実行Traceから自動生成していない。[playtest-handoff.json](playtest-handoff.json) のE01～E07が参照する。実行基盤・Scenario実形式・Environment・予算をPlaytest側で接続するまで、全項目は未実行。正常初期状態はseed=3001、facility-r1、bugs OFF。既知バグは各IDだけをONにした対照として扱う。
+
+## 接続条件と未実行範囲
+
+補助JSONは正式APIや実行可能なScenarioではなく、`executableScenario=false`、`status=not-executed-by-Playtest` の引継ぎ資料。JSON内のoracle参照はリポジトリルート相対とする。
+
+- Build: 対象EXE SHA256、正式Gua DLL SHA256、source commit、Godot/Gua版、artifact所在を結び付ける。`buildBinding` は未設定。CI artifactの保存期限を確認し、存在を恒久保証としない。
+- Environment: Windows x64、Godot 4.7、正式Gua 1.1.2、VC++ x64 runtime、ja/en、1280×800/960×720。描画・実入力は未検証で、GUI実行承認は設定されていない。
+- 隔離: loopbackの実行ごとに固有な `GUA_BRIDGE_PORT`（sample既定18732）、固有APPDATA内の `facility-escape-3d/checkpoint.json`、Playtest所有の出力先。他サンプルと共有しない。
+- Scenario/予算: Playtestの正式Scenario、Environment、独立期待値、時間・操作・モデルtoken/費用の予算を実行前に接続する。現状の予算値はnullで、選定・消費していない。
+- 所有責務: launch/attach、Scenario検証、予算、process所有権に応じたcleanup、Trace/Recording/Replayと証拠相関はPlaytestが担当。sample側はゲームの通常操作、Gua観測、固定source回帰、限定smokeを担当する。
+
+全E01～E07はPlaytest未実行。既存EXE runnerの結果やsource回帰・smokeを統合E2Eの成功へ読み替えない。export終了クラッシュとCIのload完了待ち/teardownの原因未確定記録は [testing.md](testing.md) と [export-diagnosis.md](export-diagnosis.md) を参照する。
+
+## E01
+
+通常のstart・移動・照準・取得・装置操作でのみ進む。tool/keyは保持、batteryはA復旧で一度だけ消費し重複取得しない。A/B/keyが揃って出口を操作するとresultへ遷移し、replayで初期状態へ戻る。専用clear/teleportやcheckpoint付与でクリアを代替しない。
+
+## E02
+
+B→A、A→Bの両方で進行可能。前提不足時は消費・開通・クリアしない。Aだけで出口側へ入っても反対盤で帰還でき、B修理後に進行可能。lost_keyでカード不足を作った出口操作はplayのまま拒否。これはbug付き初期条件の明示された変種である。
+
+## E03
+
+保存した位置・視点・所持品・取得済み・電源・扉・リフト位置/行先を復元する。pause中はゲーム進行を停止。relaunch/attachの所有権とcleanupはPlaytestが管理し、source hostによる単一sceneテストで代替しない。破損save拒否では現在状態を保持。lost_key ONだけでカード保持期待に違反する。
+
+## E04
+
+外周・壁を越えず、低天井は立位を阻み、しゃがみでは通れる。屋根下で立てず、退出して天井のない場所へ戻ると通常のしゃがみ切替でSTANDへ復帰できる。階段と坂で1m足場へ往復できる。扉占有中は閉鎖を延期し退避可能。door_jam ONだけで移動不能を検出し、通常reset/loadで再試行できる。遮蔽と2.3m距離を守り、through_wall ONでも距離外は操作不可。
+
+## E05
+
+未搭乗で移動したリフトは上下の固定盤から呼戻せる。移動中の通常操作で行先を反転でき、搭乗者を連続的に運ぶ。中断/保存復帰後も位置と行先を保持する。状態値だけでは視覚的な挟まりを成功判定しない。
+
+## E06
+
+ja/en、1280×800/960×720で操作ラベルと文字が欠けず、レイアウトが操作を妨げない。実キーボード/右ドラッグが通常操作として機能する。未実行のGUI確認をheadless結果で成功扱いしない。音は未実装なので品質判定不能。
+
+## E07
+
+目的と制約のみを与えた探索で、実際の観測・選択・操作・結果を残す。固定クリア手順の再生だけを探索と呼ばない。未観測・予算切れ・cleanup/Recording/Replay失敗は独立に記録し、ゲーム成功へ混ぜない。Trace/Recording/ReplayはPlaytestが正式機構で生成・相関・検証し、旧JS history.jsonで代替しない。

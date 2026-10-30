@@ -1,0 +1,19 @@
+.godot/
+vendor/
+addons/gua/bin/
+artifacts/
+dist/
+*.tmp
+.runtime/
+**/bin/
+**/obj/
+TestResults/
+*.log
+
+# Single-run evidence output is archived on the PR, never committed as raw logs.
+docs/evidence/**/engine.txt
+docs/evidence/**/operations.jsonl
+docs/evidence/**/*.trx
+docs/evidence/export-controls/**/*-console.txt
+docs/evidence/export-controls/**/*-editor.txt
+docs/evidence/**/*-save.json

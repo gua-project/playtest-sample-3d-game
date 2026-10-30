@@ -1,0 +1,24 @@
+{
+  "os": "Microsoft Windows NT 10.0.26100.0",
+  "cases": [
+    {
+      "scriptError": false,
+      "sha256": "25800f199e2523c07f2fd102274b2372d6384d5acd44cb4401a1c2dfc083a569",
+      "packComplete": true,
+      "case": "minimal-addon-native-only",
+      "exitCode": -1073741819,
+      "exeExists": true
+    },
+    {
+      "scriptError": false,
+      "sha256": "c2de928bb5b35937c7ee064a7e2e6cb274097d458e9b950c7103410b93281acc",
+      "packComplete": true,
+      "case": "minimal-addon-editor-release",
+      "exitCode": -1073741819,
+      "exeExists": true
+    }
+  ],
+  "godot": "d8055fb8c7e7f5010d7439ec69be051554055dae55a265f8647bd7301c34161c",
+  "mode": "followup",
+  "windowsFaultEvents": "Not collected: local Application log read denied; no retry"
+}

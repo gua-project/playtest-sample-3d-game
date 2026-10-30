@@ -1,0 +1,26 @@
+{
+  "protocolSchemaVersion": "2",
+  "coreVersion": "1.1.2",
+  "runtimeVersion": "1.1.2",
+  "godotPluginVersion": "1.1.2",
+  "adapterVersions": {
+    "godot": "1.1.2"
+  },
+  "abiVersion": 1,
+  "buildId": "b398e531558f38220baf0b606e7c3f33904a87a5",
+  "capabilities": [
+    "guarded_dispatch_v1",
+    "semantic_ui_tree_v2",
+    "detailed_semantic_state_v1",
+    "semantic_actions_v2",
+    "context_reset_v1",
+    "diagnostics_v1",
+    "version_v1",
+    "capture_screenshot_v1",
+    "virtual_clock_v1",
+    "world_object_tree_v1",
+    "agent_projection_v1",
+    "semantic_lint_v1",
+    "observe_v1"
+  ]
+}

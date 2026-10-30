@@ -1,0 +1,21 @@
+{
+  "independentAudit": "existing count 1 maintained; this testing/CI responsibility change is not newly independently audited",
+  "kind": "responsibility-separated-local-validation",
+  "playtestE2E": "not executed; handoff only",
+  "sourceSceneRegression": {
+    "authority": "source-regression-local.trx including official host teardown",
+    "gameSourceSha256": "548dbbab8af4d55f5f8d18b2d59c351acde4aef08266081773cc8c537821c7be",
+    "passed": 13,
+    "godot": "4.7",
+    "guaTestingGodot": "1.1.2",
+    "total": 13,
+    "scene": "res://main.tscn",
+    "failed": 0,
+    "guaTesting": "1.1.2"
+  },
+  "limitedSmoke": {
+    "result": "distribution-smoke-local.json",
+    "scope": "PE/PCK/DLL and 30-frame headless startup/exit only"
+  },
+  "gui": "not verified; approval pending"
+}

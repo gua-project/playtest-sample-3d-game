@@ -1,0 +1,8 @@
+{
+  "scenario": "facility-r1",
+  "seed": 3001,
+  "sha256": "3e5505662d595bb83086e7eaf7a9c8160dcc745a97bf8fce696115278c46df9b",
+  "objective": "Explore collision, occlusion, input and recovery through ordinary player controls; report observed outcomes, without a fixed clear route.",
+  "mode": "headless-exe",
+  "events": 86
+}

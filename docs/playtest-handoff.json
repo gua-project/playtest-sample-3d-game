@@ -1,0 +1,40 @@
+{
+  "documentType": "proposed-sample-e2e-handoff",
+  "schemaVersion": "handoff-r1",
+  "executableScenario": false,
+  "status": "not-executed-by-Playtest",
+  "repository": "gua-project/playtest-sample-3d-game",
+  "specification": "https://github.com/gua-project/playtest-sample-3d-game/issues/1",
+  "scenarioRevision": "facility-r1",
+  "seed": 3001,
+  "buildBindingRequired": ["EXE SHA256", "official Gua DLL SHA256", "source commit", "Godot/Gua versions", "artifact location"],
+  "buildBinding": null,
+  "environment": {
+    "os": "Windows x64",
+    "godot": "4.7",
+    "gua": "1.1.2",
+    "prerequisite": "Microsoft Visual C++ x64 runtime MSVCP140/VCRUNTIME140 family",
+    "languages": ["ja", "en"],
+    "windowSizes": [[1280, 800], [960, 720]],
+    "guiValidationApproved": false,
+    "bridge": "loopback; per-run unique GUA_BRIDGE_PORT (sample default 18732)",
+    "save": "per-run APPDATA/facility-escape-3d/checkpoint.json",
+    "output": "Playtest run-owned output; never shared with other samples"
+  },
+  "normalInitialState": {"screen": "title", "start": "ordinary New run", "inventory": [], "A": false, "B": false, "bugs": []},
+  "knownBugVariants": ["lost_key", "through_wall", "door_jam"],
+  "budgetBinding": {"status": "required from Playtest caller; not selected or consumed here", "timeLimitSeconds": null, "actionLimit": null, "modelTokenOrCostLimit": null},
+  "scenarioBindings": [
+    {"id": "E01", "goal": "ordinary start, collect, power, door, lift, escape, replay", "legacyTests": ["T02", "T05", "T07"], "oracle": "docs/playtest-handoff.md#e01"},
+    {"id": "E02", "goal": "alternate order and unavailable prerequisites", "legacyTests": ["T04", "T13", "T19"], "oracle": "docs/playtest-handoff.md#e02"},
+    {"id": "E03", "goal": "save during progress/motion and relaunch/attach restore", "legacyTests": ["T03", "T06", "T15"], "oracle": "docs/playtest-handoff.md#e03"},
+    {"id": "E04", "goal": "physical boundaries, moving door and retry", "legacyTests": ["T05", "T11", "T12", "T12b"], "oracle": "docs/playtest-handoff.md#e04"},
+    {"id": "E05", "goal": "unoccupied lift recall, moving reversal and rider continuity", "legacyTests": ["T16", "T17", "T18"], "oracle": "docs/playtest-handoff.md#e05"},
+    {"id": "E06", "goal": "rendered language/layout/physical input validation", "legacyTests": ["T08"], "oracle": "docs/playtest-handoff.md#e06"},
+    {"id": "E07", "goal": "goal-and-constraint exploration with failures/unknowns preserved", "legacyTests": ["T14"], "oracle": "docs/playtest-handoff.md#e07"}
+  ],
+  "owner": "Gua Playtest",
+  "runnerResponsibilities": ["launch or attach", "Scenario validation", "budgets", "owned-process cleanup and attach ownership", "Trace", "Recording", "Replay", "evidence correlation to build/scenario/environment/oracle"],
+  "sampleResponsibilities": ["game and ordinary controls", "Gua observation protocol", "fixed source-scene regressions", "build and limited packaging smoke"],
+  "executionGate": "Playtest must bind a real build, Environment, official Scenario and independent oracles and configure budgets before E2E can run. This JSON itself is not a Playtest API or runnable Scenario."
+}
