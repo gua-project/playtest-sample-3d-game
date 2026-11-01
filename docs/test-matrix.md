@@ -1,6 +1,6 @@
 # テスト契約・初期条件・独立期待値と実行層
 
-source scene起動は正式 `Gua.Testing.Godot 1.1.2`、固定操作・期待値・待機は `Gua.Testing 1.1.2`。両NuGetのrepository commitは `b398e531558f38220baf0b606e7c3f33904a87a5`。配布EXEのE2E基盤はPlaytest側に置き、サンプル内へ第二のrunnerを作らない。
+source scene起動は正式 `Gua.Testing.Godot 1.2.0`、固定操作・期待値・待機は `Gua.Testing 1.2.0`。両NuGetのrepository commitは `2e12fb3cfdf822418f349515027d6f620c5ee63b`。配布EXEのE2E基盤はPlaytest側に置き、サンプル内へ第二のrunnerを作らない。
 
 ## 現行回帰
 
@@ -48,3 +48,7 @@ source scene起動は正式 `Gua.Testing.Godot 1.1.2`、固定操作・期待値
 ## 関連文書
 
 実行方法・正式API・同期・合否判定・証拠の識別は [testing.md](testing.md)。Playtest E01～E07の接続条件・独立期待値は [playtest-handoff.md](playtest-handoff.md)。既知バグは正常仕様ではなく、各IDを単独ONにした対照で違反を検出する。
+
+## 限定Development配布検証
+
+M01はPE/PCK/DLLと起動終了に加え、実DLLのDevelopment/remote ON/ceiling Debug、source/build ID、Release構成を検証する。M02（Explicit）は新規APPDATAの配布EXEへ正式SDKで接続し、通常startでplay、通常forwardでZが0.2m以上減る、strict reset、所有process cleanupを期待する。port18743、seed3001、bugs OFF。クリア・再プレイ・探索・物理キーボード・Playtest統合の代替ではない。

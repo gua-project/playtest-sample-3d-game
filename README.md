@@ -1,6 +1,6 @@
 # FACILITY 03 — 故障した小型施設からの脱出
 
-[Issue #1](https://github.com/gua-project/playtest-sample-3d-game/issues/1) のWindows専用、一人称探索ゲームです。ゲーム本体はGodot **4.7** のGDScript、runtime addonとテストpackageは正式 **Gua 1.1.2**。素材はプリミティブの仮素材、音は未実装です。
+[Issue #1](https://github.com/gua-project/playtest-sample-3d-game/issues/1) のWindows専用、一人称探索ゲームです。ゲーム本体はGodot **4.7** のGDScript、runtime addonとテストpackageは正式 **Gua 1.2.0**。素材はプリミティブの仮素材、音は未実装です。
 
 ## ゲームを起動する
 
@@ -31,3 +31,11 @@
 描画・文字欠け・実キーボード／右ドラッグ、Playtest E2E、広範な保存状態の組合せ、未導入クリーンWindows互換性は未検証です。音は未実装、export終了クラッシュは未解決です。CIのload完了待ちとstrict teardownには原因未確定の断続的失敗記録もあります。source回帰や限定smokeの成功から、これらを解決済み・受入完了とは扱いません。
 
 検証履歴は [PRの出典記録](https://github.com/gua-project/playtest-sample-3d-game/pull/2#issuecomment-6494339001) と [CI初回失敗・再実行の比較](https://github.com/gua-project/playtest-sample-3d-game/pull/2#issuecomment-6487520105) を参照してください。CI artifactは期限付きです。既存の [レビュー台帳](docs/review.md) と [移行レビュー記録](docs/migration-review.md) は履歴資料であり、現行仕様や最新の合否一覧ではありません。
+
+## 配布SDKとremoteの境界
+
+このサンプルは正式Gua **1.2.0** の **Development / remote ON / ceiling Debug** テストSDKを明示的に使います。通常出荷Shipping/OFFやPlayer-only配布物ではありません。port/envではコンパイル済みのremote機能やPlayer上限を増やせません。Playerの公開ポリシー・Semantic/Raw Input個別許可を検証したという主張もしません。
+
+`setup-gua.ps1` は正式addon ZIPのSHA256を固定し、起動時と限定smokeは実DLLのbuild-info（flavor、remoteEnabled、remotePermissionCeiling、source/build ID）を検査します。`dist/facility-build-manifest.json` はEXE/DLL hashと実行検証範囲を結び付けるサンプル側のreceiptです。上流addon ZIPには独立manifestがないため、上流の検証済みmanifestと偽って扱いません。`-Smoke` なしのbuildはremoteValidation未実行を明記します。
+
+sourceは固有port18742、配布smokeは18743を使います。通常起動の既定18732とセーブ先は変更しません。

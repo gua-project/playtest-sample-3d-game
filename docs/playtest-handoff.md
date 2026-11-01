@@ -7,7 +7,7 @@
 補助JSONは正式APIや実行可能なScenarioではなく、`executableScenario=false`、`status=not-executed-by-Playtest` の引継ぎ資料。JSON内のoracle参照はリポジトリルート相対とする。
 
 - Build: 対象EXE SHA256、正式Gua DLL SHA256、source commit、Godot/Gua版、artifact所在を結び付ける。`buildBinding` は未設定。CI artifactの保存期限を確認し、存在を恒久保証としない。
-- Environment: Windows x64、Godot 4.7、正式Gua 1.1.2、VC++ x64 runtime、ja/en、1280×800/960×720。描画・実入力は未検証で、GUI実行承認は設定されていない。
+- Environment: Windows x64、Godot 4.7、正式Gua 1.2.0、VC++ x64 runtime、ja/en、1280×800/960×720。描画・実入力は未検証で、GUI実行承認は設定されていない。
 - 隔離: loopbackの実行ごとに固有な `GUA_BRIDGE_PORT`（sample既定18732）、固有APPDATA内の `facility-escape-3d/checkpoint.json`、Playtest所有の出力先。他サンプルと共有しない。
 - Scenario/予算: Playtestの正式Scenario、Environment、独立期待値、時間・操作・モデルtoken/費用の予算を実行前に接続する。現状の予算値はnullで、選定・消費していない。
 - 所有責務: launch/attach、Scenario検証、予算、process所有権に応じたcleanup、Trace/Recording/Replayと証拠相関はPlaytestが担当。sample側はゲームの通常操作、Gua観測、固定source回帰、限定smokeを担当する。
@@ -41,3 +41,5 @@ ja/en、1280×800/960×720で操作ラベルと文字が欠けず、レイアウ
 ## E07
 
 目的と制約のみを与えた探索で、実際の観測・選択・操作・結果を残す。固定クリア手順の再生だけを探索と呼ばない。未観測・予算切れ・cleanup/Recording/Replay失敗は独立に記録し、ゲーム成功へ混ぜない。Trace/Recording/ReplayはPlaytestが正式機構で生成・相関・検証し、旧JS history.jsonで代替しない。
+
+実行対象は明示的なDevelopment/remote ON SDK（ceiling Debug）。配布ルートの `facility-build-manifest.json` と実EXE stdoutの `FACILITY_GUA_BUILD_INFO=` を確認し、EXE/DLL hash・Gua source/build ID・remoteEnabled・remotePermissionCeilingを結び付ける。上流addon ZIPにmanifestがあるとは仮定しない。port18732は通常既定、sample自身の検証はsource18742／EXE18743。Playtest側は自分の固有portとAPPDATA/TEMP/outputを選び、Shipping/OFFをenvで有効化する迂回をしない。Player-only配布やPlayer公開ポリシー/Raw Input許可の受入は未実行。

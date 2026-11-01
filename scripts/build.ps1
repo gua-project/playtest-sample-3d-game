@@ -31,6 +31,12 @@ try {
     if($Smoke){
         & node (Join-Path $root 'tests/distribution-smoke.mjs') $dist
         if($LASTEXITCODE -ne 0){throw 'Limited distribution smoke failed'}
+        $report.remoteBuildInfo=(Get-Content (Join-Path $root 'artifacts/distribution-smoke/result.json') -Raw|ConvertFrom-Json).buildInfo
     }
+    $report.sdkPurpose='DevelopmentRemote test sample; not Shipping or Player-only distribution'
+    $report.dllSha256=(Get-FileHash $dll).Hash.ToLowerInvariant()
+    $report.remoteValidation=if($Smoke){'Verified actual exported process build-info'}else{'Not executed; use -Smoke'}
+    $report|ConvertTo-Json -Depth 8|Set-Content (Join-Path $evidence 'export.json')
+    @{schemaVersion=1;kind='facility-development-package';sampleSourceCommit=(& git -C $root rev-parse HEAD);sampleSourceDirty=(@(& git -C $root status --porcelain --untracked-files=no).Count -gt 0);gameSourceSha256=(Get-FileHash (Join-Path $root 'game.gd')).Hash.ToLowerInvariant();guaSourceCommit='2e12fb3cfdf822418f349515027d6f620c5ee63b';sdkArchiveSha256='effcad4cfc6083528bee4e469e171047cd9d2d49547a09d16be04845fcda7873';build=$report;files=@(@{path='FacilityEscape.exe';sha256=$report.exeSha256},@{path='gua_godot.windows.release.x86_64.dll';sha256=$report.dllSha256})}|ConvertTo-Json -Depth 10|Set-Content (Join-Path $dist 'facility-build-manifest.json')
     Write-Output "Windows EXE SHA256: $($report.exeSha256)"
 } finally {$env:APPDATA=$previousAppData;$env:TEMP=$previousTemp;$env:TMP=$previousTmp}

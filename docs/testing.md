@@ -23,31 +23,31 @@ $env:DOTNET_CLI_TELEMETRY_OPTOUT='1'
 dotnet test tests/Facility.Regression/Facility.Regression.csproj --configuration Release --logger 'trx;LogFileName=source-regression.trx'
 ```
 
-初回のsource importが必要ならGodot editorでprojectをimportするか、headlessの `--editor --path . --quit-after 300` を実行してください。CIは [gua-tester Godot部品 v3.2](https://github.com/gua-project/gua-tester/tree/v3.2/godot) をcommit固定してimportとdotnet testを行います。`gua-plugin-tag=gua-v1.1.2`、NuGetも1.1.2に固定しています。
+初回のsource importが必要ならGodot editorでprojectをimportするか、headlessの `--editor --path . --quit-after 300` を実行してください。CIは [gua-tester Godot部品 v3.2](https://github.com/gua-project/gua-tester/tree/v3.2/godot) をcommit固定してimportとdotnet testを行います。`gua-plugin-tag=gua-v1.2.0`、NuGetも1.2.0に固定しています。
 
-回帰は6つの代表テストメソッド・13ケースです。公式hostがsource sceneのprocess、接続、相関付き操作完了、reset、破棄を担当します。ゲーム固有の期待値とauthored checkpointだけをテスト側に置き、初期条件準備を通常操作から区別して記録します。ポート18732、ケース別APPDATA/TEMP、`artifacts/source-regression` を使います。最終結果はteardownを含むNUnit TRXを一次記録とし、ケースJSONの `testBodyOutcome` はそれだけで全体成功を意味しません。
+回帰は6つの代表テストメソッド・13ケースです。公式hostがsource sceneのprocess、接続、相関付き操作完了、reset、破棄を担当します。ゲーム固有の期待値とauthored checkpointだけをテスト側に置き、初期条件準備を通常操作から区別して記録します。ポート18742、ケース別APPDATA/TEMP、`artifacts/source-regression` を使います。最終結果はteardownを含むNUnit TRXを一次記録とし、ケースJSONの `testBodyOutcome` はそれだけで全体成功を意味しません。
 
 ## 配布smokeとビルドの限界
 
 `node tests/distribution-smoke.mjs dist` はPE/PCK/DLL照合と、使い捨てフォルダから30frameだけのheadless起動・終了を確認します。Guaへ接続せず、UI操作も行いません。結果は `artifacts/distribution-smoke`。`build.ps1 -Smoke` からも呼べます。
 
-export終了時クラッシュの既存診断は [export-diagnosis.md](export-diagnosis.md) に保持しています。現在のbuildはnonzero exitを失敗とし、source回帰やsmokeの成功で上書きしません。正式1.1.2のバイナリは改変していません。
+export終了時クラッシュの既存診断は [export-diagnosis.md](export-diagnosis.md) に保持しています。現在のbuildはnonzero exitを失敗とし、source回帰やsmokeの成功で上書きしません。正式1.2.0のバイナリは改変していません。
 
 
 ## 正式APIと同期
 
 
-公開NuGetの `Gua.Testing` と `Gua.Testing.Godot` を1.1.2に固定する。APIの出典は配布packageのREADME・nuspec・公開アセンブリ。nuspecのrepository commitは `b398e531558f38220baf0b606e7c3f33904a87a5`。preview packageや独自wire fallbackへ置き換えない。
+公開NuGetの `Gua.Testing` と `Gua.Testing.Godot` を1.2.0に固定する。APIの出典は配布packageのREADME・nuspec・公開アセンブリ。nuspecのrepository commitは `2e12fb3cfdf822418f349515027d6f620c5ee63b`。preview packageや独自wire fallbackへ置き換えない。
 
 - `GodotSceneTestHost.Load("res://main.tscn", options)` がsource project/sceneを起動し接続・破棄する。LoadRenderedやEXE用hostの代用品として使わない。
-- `GodotSceneTestHostOptions.ProjectPath / BridgeUrl / EnvironmentVariables / StartupResetPolicy / TeardownResetPolicy` を使用。固定予約port18732、ケース別APPDATA/TEMP、strict resetを設定。process探索・socket・poll・cleanupをサンプル側に実装しない。
+- `GodotSceneTestHostOptions.ProjectPath / BridgeUrl / EnvironmentVariables / StartupResetPolicy / TeardownResetPolicy` を使用。固定予約port18742、ケース別APPDATA/TEMP、strict resetを設定。process探索・socket・poll・cleanupをサンプル側に実装しない。
 - `GuaAssertions.Query(context).ById(id).ClickAsync()` が可視/有効/公開actionを解決し相関付き完了を待つ。操作後のframe更新待ちは `GuaAssertions.WaitUntilAsync` を使う。
-- `host.GetVersion()` でcore/runtime/pluginの1.1.2をassert。`host.CreateDiagnosticsSession()` と `Capture`、hostのteardown診断を使用する。最終成功はteardownも含むNUnit TRXで判定。
+- `host.GetVersion()` でcore/runtime/pluginの1.2.0をassert。`host.CreateDiagnosticsSession()` と `Capture`、hostのteardown診断を使用する。最終成功はteardownも含むNUnit TRXで判定。
 - `Gua.Testing.Recording` / Trace / Replay の追加実装はこのrepoへ作らない。Playtest側の統合責務とする。
 
 Playtestの正式Scenario/Environment/予算/Trace等への接続は未実装・未検証で、[playtest-handoff.json](playtest-handoff.json) はAPI互換を主張しない引継ぎ資料である。
 
-CIは公式 [gua-tester/godot v3.2](https://github.com/gua-project/gua-tester/tree/v3.2/godot)、commit `9a819e252d714ecec80d0d206f3c8894cb8a13a1` を利用する。Godot4.7と `gua-plugin-tag=gua-v1.1.2` を固定した。source importの終了エラーが起きた場合は既存診断を参照して失敗として報告し、actionをコピーして独自runnerで回避しない。
+CIは公式 [gua-tester/godot v3.2](https://github.com/gua-project/gua-tester/tree/v3.2/godot)、commit `9a819e252d714ecec80d0d206f3c8894cb8a13a1` を利用する。Godot4.7と `gua-plugin-tag=gua-v1.2.0` を固定した。source importの終了エラーが起きた場合は既存診断を参照して失敗として報告し、actionをコピーして独自runnerで回避しない。
 
 描画・実入力はsource headless回帰の判定対象外で、現在は未検証。実行方法は [本書の実行方法](#サンプル回帰を実行する)、テスト契約は [test-matrix.md](test-matrix.md) を参照する。
 
@@ -78,3 +78,21 @@ CI成果物は保存期限があるため、リンクがあるだけで恒久保
 再利用する入力は `tests/fixtures` で管理する。単発出力はGit管理せず、source回帰・smoke・export診断は既定の `artifacts/` 以下へ出力する。旧出力の要約スクリプトは `node scripts/summarize-evidence.mjs <run>` で `artifacts/<run>` を読み、`artifacts/evidence-summaries/<run>` へ書く。必要な調査証拠は公開範囲と秘密・個人情報を点検し、当該PR/issueへの添付等へ保存して再取得・SHA/内容一致を確認してから参照を残す。GitにZIP自体を追加したり、期限付きCI artifactだけへ依存したりしない。
 
 現在、CIで `Click load` の完了待ちtimeoutに続いて、同じrequestの未消費完了eventをstrict teardownが検出した断続的な失敗の記録がある。同一HEADの一度の再実行は成功したが根本原因は未確定で、解決済みとはしない。失敗・再実行・比較の出典は [PR検証記録](https://github.com/gua-project/playtest-sample-3d-game/pull/2#issuecomment-6487520105)。timeout、teardown、nonzero exportを抑制して成功へ変えず、各attemptを区別する。
+
+## v1.2.0 Development SDKと限定EXE接続smoke
+
+公開addon ZIP `gua-godot-addon-v1.2.0.zip` のSHA256は `effcad4cfc6083528bee4e469e171047cd9d2d49547a09d16be04845fcda7873`、source/build IDは `2e12fb3cfdf822418f349515027d6f620c5ee63b`。通常Shipping/OFFはenv/portで有効化しない。サンプルはDevelopment/remote ONを選び、EditorのDebugとexportのReleaseの両方で実build-infoを確認する。上限DebugでありPlayer-only版ではない。Player公開ポリシーやRaw Input個別許可の保証は別である。
+
+限定配布smokeは実export DLLのbuild-infoとhashも確認する。さらに次のExplicitテストは正式 `GuaRemoteContext` と `GuaAssertions` だけで、隔離フォルダへコピーした実EXEに接続し、通常start→forwardでZ座標が減ること、strict resetと所有process終了を確認する。source用 `GodotSceneTestHost` をEXEに流用しない。Scenario・探索・予算・Trace/Recording/Replay基盤は追加せず、Playtest E2Eは未実行のままとする。
+
+```powershell
+# 先に README の build.ps1 -Smoke を実行
+# 同じNUGET_PACKAGES/vendorキャッシュを使用する
+dotnet test tests/Facility.Regression/Facility.Regression.csproj --configuration Release --no-restore --filter 'FullyQualifiedName=Facility.Regression.ExportedExecutableSmoke.ConnectStartAndMove' --logger 'trx;LogFileName=package-smoke.trx'
+```
+
+source回帰13件と、この明示選択が必要なEXE接続smoke1件は別の層。既定source実行ではExplicitをskipし、CIはビルド後に名前を指定する。EXE接続smokeはport18743と `artifacts/package-protocol-smoke/<run-GUID>` 内の新規package/APPDATA/TEMP、sourceは18742を使用する。全体の合否はcleanup込みTRX。ケースJSON単体を合格とはしない。
+
+公開NuGetのWindows `Gua.Core` はmanifestのbuild-infoと実 `GuaBuildInfo.GetJson()` が一致し、配布された `gua.dll` のhashを照合する。manifestにはsource native pair由来の `gua_runtime.dll` とLICENSEも記載されるが、Coreのnativeフォルダにはそれらがないため、全entryを検証済みとはしない。限定smokeのJSONにこの検証範囲を記録する。SDKのmanifest記載範囲は上流確認事項として残す。
+
+既存のexport終了クラッシュ対照はGua1.1.2時点の履歴であり、v1.2.0の成功を根本解決証拠にしない。load完了timeout/strict teardownの断続的失敗、GUI/Playtest E2E/clean Windowsの未検証も維持する。

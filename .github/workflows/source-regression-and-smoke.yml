@@ -34,8 +34,8 @@ jobs:
           godot-version: '4.7'
           godot-status: stable
           gua-repository: gua-project/gua
-          gua-plugin-tag: gua-v1.1.2
-          gua-plugin-asset-pattern: gua-godot-addon-v1.1.2.zip
+          gua-plugin-tag: gua-v1.2.0
+          gua-plugin-asset-pattern: gua-godot-addon-v1.2.0.zip
           project-path: .
           test-project: tests/Facility.Regression/Facility.Regression.csproj
           test-logger: trx;LogFileName=source-regression.trx
@@ -45,11 +45,15 @@ jobs:
       - name: Build Windows package and run limited startup smoke
         shell: pwsh
         run: |
+          ./scripts/setup-gua.ps1
           Invoke-WebRequest 'https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_export_templates.tpz' -OutFile vendor/templates.zip
           if ((Get-FileHash vendor/templates.zip).Hash.ToLowerInvariant() -ne '9714459dc071907c0f3d5f17d608faf69e7cda21331fc5d39c4503ffa4e99eec') { throw 'Template SHA256 mismatch' }
           Expand-Archive vendor/templates.zip vendor/templates
           $console=Join-Path (Split-Path '${{ steps.gua.outputs.godot-executable }}') 'Godot_v4.7-stable_win64_console.exe'
           ./scripts/build.ps1 -Godot $console -TemplateDirectory "$pwd/vendor/templates/templates" -Smoke
+      - name: Limited exported EXE protocol smoke using official SDK
+        shell: pwsh
+        run: dotnet test tests/Facility.Regression/Facility.Regression.csproj --configuration Release --no-restore --filter 'FullyQualifiedName=Facility.Regression.ExportedExecutableSmoke.ConnectStartAndMove' --logger 'trx;LogFileName=package-smoke.trx'
       - name: Preserve source regression and limited smoke evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -59,6 +63,7 @@ jobs:
             artifacts/source-regression/
             artifacts/build/
             artifacts/distribution-smoke/
+            artifacts/package-protocol-smoke/
             tests/Facility.Regression/TestResults/
       - uses: actions/upload-artifact@v4
         with:
