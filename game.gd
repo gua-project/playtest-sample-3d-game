@@ -49,6 +49,14 @@ func _ready() -> void:
 	_build_world()
 	_build_ui()
 	adapter.attach(ui)
+	# This playtest sample deliberately uses the published Development/remote-ON SDK.
+	# Shipping/OFF cannot be enabled by a bridge port or environment setting.
+	var build_info: Dictionary = adapter.get_build_info()
+	print("FACILITY_GUA_BUILD_INFO=" + JSON.stringify(build_info))
+	if build_info.get("flavor") != "development" or not build_info.get("remoteEnabled", false) or build_info.get("remotePermissionCeiling") != "debug":
+		push_error("Facility requires the explicit Development/remote-ON test SDK")
+		get_tree().quit(2)
+		return
 	var port := int(OS.get_environment("GUA_BRIDGE_PORT"))
 	if port == 0: port = 18732
 	if not adapter.start_inspector_bridge(port): push_error("Gua bridge unavailable")
@@ -557,7 +565,7 @@ func record_event(action: String) -> void:
 	events.append({"action":action,"time":elapsed,"screen":screen,"state":snapshot()})
 	if events.size()>2000: events.pop_front()
 	var file := FileAccess.open("user://last-run.json",FileAccess.WRITE)
-	if file: file.store_string(JSON.stringify({"build":"0.1.0","gua":"1.1.2","events":events},"\t"))
+	if file: file.store_string(JSON.stringify({"build":"0.1.0","gua":JSON.parse_string(adapter.get_version_json()).get("coreVersion","unknown"),"guaBuildInfo":adapter.get_build_info(),"events":events},"\t"))
 
 func _process(_delta: float) -> void:
 	if screen == "play":

@@ -5,6 +5,9 @@ $experimentRoot=Join-Path $sourceRoot ('artifacts/export-diagnostics/'+[guid]::N
 New-Item -ItemType Directory -Force $experimentRoot | Out-Null
 $originalAppData=$env:APPDATA; $originalTemp=$env:TEMP; $originalTmp=$env:TMP
 $results=@()
+$sdkDll=Join-Path $sourceRoot 'addons/gua/bin/gua_godot.windows.release.x86_64.dll'
+$sdkHash=(Get-FileHash $sdkDll).Hash.ToLowerInvariant()
+if($sdkHash -ne '19a2bdd6cc6f3533ada6c5af02ba4b3dfcb95536a451216fb99d9e39ec1c6d0a'){throw 'Run setup-gua.ps1 for the pinned Gua 1.2.0 SDK before new comparisons'}
 try {
     $cases=if($Mode -eq 'baseline'){@('minimal-no-addon','minimal-addon','game-no-addon','game-addon')}else{@('minimal-addon-native-only','minimal-addon-editor-release')}
     foreach($case in $cases) {
@@ -57,6 +60,6 @@ class NoGuaAdapter extends RefCounted:
     }
 } finally {
     $env:APPDATA=$originalAppData; $env:TEMP=$originalTemp; $env:TMP=$originalTmp
-    @{mode=$Mode;godot=(Get-FileHash $Godot).Hash.ToLowerInvariant();os=[Environment]::OSVersion.VersionString;windowsFaultEvents='Not collected: local Application log read denied; no retry';cases=$results} | ConvertTo-Json -Depth 5 | Set-Content (Join-Path $experimentRoot 'comparison.json')
+    @{guaVersion='1.2.0';guaSourceCommit='2e12fb3cfdf822418f349515027d6f620c5ee63b';guaReleaseDllSha256=$sdkHash;mode=$Mode;godot=(Get-FileHash $Godot).Hash.ToLowerInvariant();os=[Environment]::OSVersion.VersionString;windowsFaultEvents='Not collected: local Application log read denied; no retry';cases=$results} | ConvertTo-Json -Depth 5 | Set-Content (Join-Path $experimentRoot 'comparison.json')
     Write-Output "Disposable experiment evidence: $experimentRoot"
 }

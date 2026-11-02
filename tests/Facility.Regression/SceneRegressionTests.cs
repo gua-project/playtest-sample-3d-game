@@ -30,10 +30,12 @@ public sealed class SceneRegressionTests
         var temporary = Path.Combine(output, "tmp");
         Directory.CreateDirectory(temporary);
         observations.Clear();
+        Assert.That(Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(Path.Combine(root, "addons", "gua", "bin", "gua_godot.windows.debug.x86_64.dll")))).ToLowerInvariant(),
+            Is.EqualTo("dbf23cf68206b7c918d4790ba606ce62048e13e3438e306e4dccd4e117e5872e"), "pinned official Development debug DLL");
         host = GodotSceneTestHost.Load("res://main.tscn", new GodotSceneTestHostOptions
         {
             ProjectPath = root,
-            BridgeUrl = "ws://127.0.0.1:18732",
+            BridgeUrl = "ws://127.0.0.1:18742",
             Headless = true,
             AdditionalArguments = ["--max-fps", "60"],
             EnvironmentVariables = new Dictionary<string, string>
@@ -52,9 +54,10 @@ public sealed class SceneRegressionTests
         var version = host.GetVersion();
         Assert.Multiple(() =>
         {
-            Assert.That(version.CoreVersion, Is.EqualTo("1.1.2"));
-            Assert.That(version.RuntimeVersion, Is.EqualTo("1.1.2"));
-            Assert.That(version.GodotPluginVersion, Is.EqualTo("1.1.2"));
+            Assert.That(version.CoreVersion, Is.EqualTo("1.2.0"));
+            Assert.That(version.RuntimeVersion, Is.EqualTo("1.2.0"));
+            Assert.That(version.GodotPluginVersion, Is.EqualTo("1.2.0"));
+            Assert.That(version.BuildId, Is.EqualTo("2e12fb3cfdf822418f349515027d6f620c5ee63b"));
         });
     }
 
